@@ -7,4 +7,3 @@ django-rest-knox==4.1.0
 django-heroku
 Pillow==8.2.0
 gunicorn==20.1.0
-whitenoise==5.0.1
