@@ -1,1 +1,1 @@
-web: waitress-serve --port=$PORT settings.wsgi:application
+web: gunicorn CCMS.wsgi --log-file -
