@@ -132,5 +132,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 from datetime import timedelta
 REST_KNOX = {
-       'TOKEN_TTL': timedelta(hours=24),  # default time 10h
+       'TOKEN_TTL': timedelta(hours=24),
 }
