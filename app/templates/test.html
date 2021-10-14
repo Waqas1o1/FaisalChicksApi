@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> -->
+    <style>
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+            width: 100%;
+            border: 1px solid #ddd;
+        }
+        
+        th {
+            border: 1px dotted rgb(112, 92, 92);
+        }
+        
+        th,
+        td {
+            text-align: center;
+            padding: 8px;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2
+        }
+    </style>
+    <style>
+        .sk-folding-cube {
+            margin: 20px auto;
+            width: 40px;
+            height: 40px;
+            position: relative;
+            -webkit-transform: rotateZ(45deg);
+            transform: rotateZ(45deg);
+        }
+        
+        .sk-folding-cube .sk-cube {
+            float: left;
+            width: 50%;
+            height: 50%;
+            position: relative;
+            -webkit-transform: scale(1.1);
+            -ms-transform: scale(1.1);
+            transform: scale(1.1);
+        }
+        
+        .sk-folding-cube .sk-cube:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #333;
+            -webkit-animation: sk-foldCubeAngle 2.4s infinite linear both;
+            animation: sk-foldCubeAngle 2.4s infinite linear both;
+            -webkit-transform-origin: 100% 100%;
+            -ms-transform-origin: 100% 100%;
+            transform-origin: 100% 100%;
+        }
+        
+        .sk-folding-cube .sk-cube2 {
+            -webkit-transform: scale(1.1) rotateZ(90deg);
+            transform: scale(1.1) rotateZ(90deg);
+        }
+        
+        .sk-folding-cube .sk-cube3 {
+            -webkit-transform: scale(1.1) rotateZ(180deg);
+            transform: scale(1.1) rotateZ(180deg);
+        }
+        
+        .sk-folding-cube .sk-cube4 {
+            -webkit-transform: scale(1.1) rotateZ(270deg);
+            transform: scale(1.1) rotateZ(270deg);
+        }
+        
+        .sk-folding-cube .sk-cube2:before {
+            -webkit-animation-delay: 0.3s;
+            animation-delay: 0.3s;
+        }
+        
+        .sk-folding-cube .sk-cube3:before {
+            -webkit-animation-delay: 0.6s;
+            animation-delay: 0.6s;
+        }
+        
+        .sk-folding-cube .sk-cube4:before {
+            -webkit-animation-delay: 0.9s;
+            animation-delay: 0.9s;
+        }
+        
+        @-webkit-keyframes sk-foldCubeAngle {
+            0%,
+            10% {
+                -webkit-transform: perspective(140px) rotateX(-180deg);
+                transform: perspective(140px) rotateX(-180deg);
+                opacity: 0;
+            }
+            25%,
+            75% {
+                -webkit-transform: perspective(140px) rotateX(0deg);
+                transform: perspective(140px) rotateX(0deg);
+                opacity: 1;
+            }
+            90%,
+            100% {
+                -webkit-transform: perspective(140px) rotateY(180deg);
+                transform: perspective(140px) rotateY(180deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes sk-foldCubeAngle {
+            0%,
+            10% {
+                -webkit-transform: perspective(140px) rotateX(-180deg);
+                transform: perspective(140px) rotateX(-180deg);
+                opacity: 0;
+            }
+            25%,
+            75% {
+                -webkit-transform: perspective(140px) rotateX(0deg);
+                transform: perspective(140px) rotateX(0deg);
+                opacity: 1;
+            }
+            90%,
+            100% {
+                -webkit-transform: perspective(140px) rotateY(180deg);
+                transform: perspective(140px) rotateY(180deg);
+                opacity: 0;
+            }
+        }
+    </style>
+    <style>
+        .addBtn {
+            border: 1px solid;
+            padding: 10px;
+            box-shadow: 5px 10px #d4cdcd;
+            width: 25vw;
+            height: 80px;
+            background-color: rgb(125, 119, 216);
+            color: seashell;
+            font-weight: 600;
+        }
+        
+        .container {
+            padding: 40px;
+        }
+        
+        body {
+            border: 2px double rgb(0, 255, 0);
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="width: 100wh;text-align: center;">
+        <div>
+            <button class='addBtn' onclick="Add()" id='btn'>
+                <h1>Addd Entities</h1>
+                <span id='spineer' style="display: none;">
+                    <div class="sk-folding-cube">
+                        <div class="sk-cube1 sk-cube"></div>
+                        <div class="sk-cube2 sk-cube"></div>
+                        <div class="sk-cube4 sk-cube"></div>
+                        <div class="sk-cube3 sk-cube"></div>
+                    </div>
+                </span>
+            </button>
+            </span>
+
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Party Leadger</h2>
+        <div style="overflow-x:auto;">
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <th>Party</th>
+                    <th>Category</th>
+                    <th>Product</th>
+                    <th>Description</th>
+                    <th>Qty</th>
+                    <th>Rate</th>
+                    <th>Freight</th>
+                    <th>Transaction Type</th>
+                    <th>Total Amount</th>
+                    <th>Net Balance</th>
+                </tr>
+                {% for r in Party %}
+                <tr>
+                    <td>{{r.date}}</td>
+                    <td>{{r.party}}</td>
+                    <td>{{r.category}}</td>
+                    <td>{{r.product}}</td>
+                    <td>{{r.description}}</td>
+                    <td>{{r.qty}}</td>
+                    <td>{{r.rate}}</td>
+                    <td>{{r.freight}}</td>
+                    <td>{{r.transaction_type}}</td>
+                    <td>{{r.total_amount}}</td>
+                    <td>{{r.net_balance}}</td>
+                </tr>
+                {% endfor %}
+
+            </table>
+        </div>
+        <h2>SalesOfficer Leadger</h2>
+        <div style="overflow-x:auto;">
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <th>SalesOfficer</th>
+                    <th>Category</th>
+                    <th>Product</th>
+                    <th>Description</th>
+                    <th>Qty</th>
+                    <th>Rate</th>
+                    <th>Transaction Type</th>
+                    <th>Total Amount</th>
+                    <th>Net Balance</th>
+                </tr>
+                {% for r in SalesOfficer %}
+                <tr>
+                    <td>{{r.date}}</td>
+                    <td>{{r.sales_officer}}</td>
+                    <td>{{r.category}}</td>
+                    <td>{{r.product}}</td>
+                    <td>{{r.description}}</td>
+                    <td>{{r.qty}}</td>
+                    <td>{{r.rate}}</td>
+                    <td>{{r.transaction_type}}</td>
+                    <td>{{r.total_amount}}</td>
+                    <td>{{r.net_balance}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <h2>Bank Leadger</h2>
+        <div style="overflow-x:auto;">
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <th>Bank</th>
+                    <th>Description</th>
+                    <th>TransactionType</th>
+                    <th>Total Amount</th>
+                    <th>Net Balance</th>
+                </tr>
+                {% for r in Bank %}
+                <tr>
+                    <td>{{r.date}}</td>
+                    <td>{{r.bank}}</td>
+                    <td>{{r.description}}</td>
+                    <td>{{r.transaction_type}}</td>
+                    <td>{{r.total_amount}}</td>
+                    <td>{{r.net_balance}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <h2>Sales Leadger</h2>
+        <div style="overflow-x:auto;">
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Product</th>
+                    <th>Description</th>
+                    <th>Transaction Type</th>
+                    <th>Total Amount</th>
+                    <th>Net Balance</th>
+                </tr>
+                {% for r in Sales %}
+                <tr>
+                    <td>{{r.date}}</td>
+                    <td>{{r.category}}</td>
+                    <td>{{r.product}}</td>
+                    <td>{{r.description}}</td>
+                    <td>{{r.transaction_type}}</td>
+                    <td>{{r.total_amount}}</td>
+                    <td>{{r.net_balance}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <h2>Freight Leadger</h2>
+        <div style="overflow-x:auto;">
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Product</th>
+                    <th>Description</th>
+                    <th>Qty</th>
+                    <th>Rate</th>
+                    <th>Transaction Type</th>
+                    <th>Total Amount</th>
+                    <th>Net Balance</th>
+                </tr>
+                {% for r in Freight %}
+                <tr>
+                    <td>{{r.date}}</td>
+                    <td>{{r.category}}</td>
+                    <td>{{r.product}}</td>
+                    <td>{{r.description}}</td>
+                    <td>{{r.qty}}</td>
+                    <td>{{r.rate}}</td>
+                    <td>{{r.transaction_type}}</td>
+                    <td>{{r.total_amount}}</td>
+                    <td>{{r.net_balance}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <h2>Discount Leadger</h2>
+        <div style="overflow-x:auto;">
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Product</th>
+                    <th>Description</th>
+                    <th>Qty</th>
+                    <th>Rate</th>
+                    <th>Transaction Type</th>
+                    <th>Discounted Amount</th>
+                    <th>Total Amount</th>
+                    <th>Net Balance</th>
+                </tr>
+                {% for r in Discount %}
+                <tr>
+                    <td>{{r.date}}</td>
+                    <td>{{r.category}}</td>
+                    <td>{{r.product}}</td>
+                    <td>{{r.description}}</td>
+                    <td>{{r.qty}}</td>
+                    <td>{{r.rate}}</td>
+                    <td>{{r.transaction_type}}</td>
+                    <td>{{r.discounted_amount}}</td>
+                    <td>{{r.total_amount}}</td>
+                    <td>{{r.net_balance}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <h2>Cash Leadger</h2>
+        <div style="overflow-x:auto;">
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Transaction Type</th>
+                    <th>Total Amount</th>
+                    <th>Net Balance</th>
+                </tr>
+                {% for r in Cash %}
+                <tr>
+                    <td>{{r.date}}</td>
+                    <td>{{r.description}}</td>
+                    <td>{{r.transaction_type}}</td>
+                    <td>{{r.total_amount}}</td>
+                    <td>{{r.net_balance}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <h2>Clearing Leadger</h2>
+        <div style="overflow-x:auto;">
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Transaction Type</th>
+                    <th>Total Amount</th>
+                    <th>Net Balance</th>
+                </tr>
+                {% for r in Clearing %}
+                <tr>
+                    <td>{{r.date}}</td>
+                    <td>{{r.description}}</td>
+                    <td>{{r.transaction_type}}</td>
+                    <td>{{r.total_amount}}</td>
+                    <td>{{r.net_balance}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <h2>Cash Leadger</h2>
+        <div style="overflow-x:auto;">
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Transaction Type</th>
+                    <th>Total Amount</th>
+                    <th>Net Balance</th>
+                </tr>
+                {% for r in discounted %}
+                <tr>
+                    <td>{{r.date}}</td>
+                    <td>{{r.description}}</td>
+                    <td>{{r.transaction_type}}</td>
+                    <td>{{r.total_amount}}</td>
+                    <td>{{r.net_balance}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+
+        <h2>Incentice Leadger</h2>
+        <div style="overflow-x:auto;">
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Transaction Type</th>
+                    <th>Total Amount</th>
+                    <th>Net Balance</th>
+                </tr>
+                {% for r in Incentive %}
+                <tr>
+                    <td>{{r.date}}</td>
+                    <td>{{r.description}}</td>
+                    <td>{{r.transaction_type}}</td>
+                    <td>{{r.total_amount}}</td>
+                    <td>{{r.net_balance}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+
+    </div>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script>
+        function Add() {
+            console.log('Here');
+            $.ajax({
+                url: `/app/AddEntities`,
+                type: 'GET',
+                encode: true,
+                beforeSend: function() {
+                    document.getElementById('spineer').style.display = 'block';
+                },
+                success: function(data) {
+                    document.getElementById('btn').style.backgroundColor = 'green';
+                    document.getElementById('btn').innerHTML = 'Added';
+                },
+                error: function() {
+                    document.getElementById('btn').style.backgroundColor = 'red';
+                    document.getElementById('btn').innerHTML = 'Error Contact Waqas';
+                }
+            })
+        }
+    </script>
+</body>
+
+</html>
