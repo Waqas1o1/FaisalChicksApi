@@ -46,7 +46,7 @@ class Party(models.Model):
     contact = models.CharField(max_length=13)
     # Relation
     discount = models.ForeignKey(DiscountCategory,on_delete=models.CASCADE)
-    sales_Officer = models.ForeignKey(SalesOfficer,on_delete=models.SET_NULL,null=True)
+    sale_officer = models.ForeignKey(SalesOfficer,on_delete=models.CASCADE)
     category = models.ForeignKey(Category,on_delete=models.SET_NULL,null=True)
     # Accounts
     creditLimit = models.FloatField()

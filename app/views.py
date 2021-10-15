@@ -13,11 +13,10 @@ from django.views.decorators.csrf import csrf_exempt
 # CRUD oprations
 class PartyViewSet(viewsets.ViewSet):
     def list(self, request):
-        # if request.user.is_superuser or p.SalesOfficer(request) or p.Accountant(request) :
         user = request.user.groups.all().first().name
         if user == 'salesofficer':
             sales_officer = m.SalesOfficer.objects.get(user=request.user)
-            data = m.Party.objects.filter(sales_Officer=sales_officer)
+            data = m.Party.objects.filter(sale_officer=sales_officer)
         else:
             data = m.Party.objects.all()
 
@@ -25,9 +24,6 @@ class PartyViewSet(viewsets.ViewSet):
             data, many=True, context={"request": request})
         response_dict = {
             "error": False, "message": "All List Data", "data": serializer.data}
-        # else:
-        #     response_dict = {
-        #         "error": True, "message": 'UnAuthenticated Person'}
         return Response(response_dict)
 
     def create(self, request):
@@ -102,17 +98,12 @@ class PartyViewSet(viewsets.ViewSet):
 class SalesOfficerViewSet(viewsets.ViewSet):
 
     def list(self, request):
-        # if request.user.is_superuser or p.Accountant(request):
-        if request: 
-            data = m.SalesOfficer.objects.all()
-            serializer = s.SalesOfficerSerializer(
-                data, many=True, context={"request": request})
-            response_dict = {
-                "error": False, "message": "All List Data", "data": serializer.data}
-            return Response(response_dict)
-        else:
-            response_dict = {
-                "error": False, "message": 'UnAuthenticated Person'}
+        # if request.user.is_superuser or p.Accountant(request)
+        data = m.SalesOfficer.objects.all()
+        serializer = s.SalesOfficerSerializer(
+            data, many=True, context={"request": request})
+        response_dict = {
+            "error": False, "message": "All List Data", "data": serializer.data}
         return Response(response_dict)
     def create(self, request):
         if request.user.is_superuser :
@@ -340,15 +331,12 @@ class CategoryViewSet(viewsets.ViewSet):
 class ProductViewSet(viewsets.ViewSet):
     def list(self, request):
         # if request.user.is_superuser or p.SalesOfficer(request) or p.Accountant(request):
-        if request:
-            data = m.Product.objects.all()
-            serializer = s.ProductSerializer(
-                data, many=True, context={"request": request})
-            response_dict = {
-                "error": False, "message": "All List Data", "data": serializer.data}
-            return Response(response_dict)
-        else:
-            HttpResponse('{"error": False, "message": "All List Data"}')
+        data = m.Product.objects.all()
+        serializer = s.ProductSerializer(
+            data, many=True, context={"request": request})
+        response_dict = {
+            "error": False, "message": "All List Data", "data": serializer.data}
+        return Response(response_dict)
 
     def create(self, request):
         # if request.user.is_superuser :

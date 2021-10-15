@@ -16,7 +16,7 @@ class PartySerializer(serializers.ModelSerializer):
         response = super().to_representation(instance)
         response['category'] = CategorySerializer(instance.category).data
         response['discount'] = DiscountCategorySerializer(instance.discount).data
-        response['sales_Officer'] = SalesOfficerSerializer(instance.sales_Officer).data
+        response['sale_officer'] = SalesOfficerSerializer(instance.sale_officer).data
         return response
 
 class SalesOfficerSerializer(serializers.ModelSerializer):
