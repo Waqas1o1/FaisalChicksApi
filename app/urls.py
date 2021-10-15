@@ -36,5 +36,8 @@ urlpatterns = [
     path('AproveRecovery/<int:id>/',views.RecoveryStatusChange),
     # Test
     path('test',views.Test),
+    # Import
+    path('ImportCSV/',views.Import),
+
 
 ]

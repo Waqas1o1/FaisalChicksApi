@@ -6,7 +6,7 @@ from app import models as m
 from app import serializers as s
 from app import permisions as p
 from django.db.models import Q
-
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 # Authentication
  
@@ -14,7 +14,13 @@ from django.db.models import Q
 class PartyViewSet(viewsets.ViewSet):
     def list(self, request):
         # if request.user.is_superuser or p.SalesOfficer(request) or p.Accountant(request) :
-        data = m.Party.objects.all()
+        user = request.user.groups.all().first().name
+        if user == 'salesofficer':
+            sales_officer = m.SalesOfficer.objects.get(user=request.user)
+            data = m.Party.objects.filter(sales_Officer=sales_officer)
+        else:
+            data = m.Party.objects.all()
+
         serializer = s.PartySerializer(
             data, many=True, context={"request": request})
         response_dict = {
@@ -405,14 +411,11 @@ class ProductViewSet(viewsets.ViewSet):
 class DiscountCategoryViewSet(viewsets.ViewSet):
 
     def list(self, request):
-        # if request.user.is_superuser or p.SalesOfficer(request) or p.Accountant(request):
         data = m.DiscountCategory.objects.all()
         serializer = s.DiscountCategorySerializer(
             data, many=True, context={"request": request})
         response_dict = {"error": False, "message": "All List Data", "data": serializer.data}
         return Response(response_dict)
-        # else:
-        #     HttpResponse('{"error": False, "message": "No Authenticated"}')
     
     def create(self, request):
         # if request.user.is_superuser:
@@ -1045,3 +1048,9 @@ def GetPartyOrderByAmount(request,party,amount):
     response_dict = {
                 "error": False, "message": "All List Data", "data": serializer.data}
     return JsonResponse(response_dict)
+
+@csrf_exempt
+def Import(request):
+    if request.method == 'POST':
+        print('Here')
+    return JsonResponse('Ok')
