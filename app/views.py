@@ -106,22 +106,20 @@ class SalesOfficerViewSet(viewsets.ViewSet):
             "error": False, "message": "All List Data", "data": serializer.data}
         return Response(response_dict)
     def create(self, request):
-        if request.user.is_superuser :
-            try:
-                serializer = s.SalesOfficerSerializer(
-                    data=request.data, context={"request": request})
-                serializer.is_valid(raise_exception=True)
-                serializer.save()
-                response_dict = {"error": False,
-                                "message": "Data Save Successfully"}
-            except ValueError as err:
-                response_dict = {"error": True, "message": err}
-            except:
-                response_dict = {"error": True,
+        try:
+            username = request.data['username']
+            password = request.data['password']
+            repassword = request.data['repassword']
+            serializer = s.SalesOfficerSerializer(data=request.data, context={"request": request})
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            response_dict = {"error": False,
+                            "message": "Data Save Successfully"}
+        except ValueError as err:
+            response_dict = {"error": True, "message": err}
+        except:
+            response_dict = {"error": True,
                                 "message": "Error During Saving Data"}
-        else:
-            response_dict = {
-                "error": False, "message": 'UnAuthenticated Person'}
         return JsonResponse(response_dict)
 
     def retrieve(self, request, pk=None):
@@ -1036,9 +1034,26 @@ def GetPartyOrderByAmount(request,party,amount):
     response_dict = {
                 "error": False, "message": "All List Data", "data": serializer.data}
     return JsonResponse(response_dict)
-
+import pandas as pd
 @csrf_exempt
 def Import(request):
     if request.method == 'POST':
-        print('Here')
-    return JsonResponse('Ok')
+        type = request.POST['type']
+        df = pd.read_csv(request.FILES['file'])
+        for index, row in df.iterrows():
+            if type == 'Discount':
+                m.DiscountCategory(name=row['name'],discount=row['discount']).save()
+            if type == 'Party':
+                so = m.SalesOfficer.objects.get(id=row['SalesOfficer id'])
+                dt = m.DiscountCategory.objects.get(id=row['discount id'])
+                ct = m.Category.objects.get(id=row['category id'])
+                m.Party(name=row['name'],email=row['email'],contact=row['contact'],creditLimit=row['creditLimit'],salesTarget=row['salesTarget'],area=row['area'],sale_officer=so,discount=dt,category=ct,opening_Balance=row['opening_Balance'],ref_id=row['ref_id']).save()
+            if type == 'Category':
+                m.Category(name=row['name']).save()
+            if type == 'Bank':
+                m.Bank(name=row['name'],account_no=row['account_no'],opening_Balance=row['opening_Balance']).save()
+            if type == 'Product':
+                ct = m.Category.objects.get(id=row['category id'])
+                m.Product(name=row['name'],type=row['type'],unit=row['unit'],pakage_weight=row['pakage_weight'],sales_price=row['sales_price'],cost_price=row['cost_price'],category=ct).save()
+    
+    return JsonResponse('Ok',safe=False)

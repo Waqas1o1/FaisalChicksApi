@@ -43,6 +43,8 @@ class Party(models.Model):
     name = models.CharField(max_length=30, unique=True)
     email = models.EmailField(max_length=30, unique=True)
     area = models.CharField(max_length=300)
+    zone = models.CharField(max_length=300)
+    region = models.CharField(max_length=300)
     contact = models.CharField(max_length=13)
     # Relation
     discount = models.ForeignKey(DiscountCategory,on_delete=models.CASCADE)
@@ -54,8 +56,8 @@ class Party(models.Model):
     opening_Balance = models.FloatField()
     current_Balance = models.FloatField(blank=True, null=True)
     # Images 
-    SCI = models.ImageField(null=True,blank=True,upload_to='Security Check Images')
-    TOR = models.ImageField(null=True,blank=True,upload_to='Terms of Recoreds')
+    SCI = models.FileField(null=True,blank=True,upload_to='Security Check Images')
+    TOR = models.FileField(null=True,blank=True,upload_to='Terms of Recoreds')
     # Date
     date = models.DateField(default=timezone.now, blank=True)
 
@@ -67,11 +69,11 @@ class Party(models.Model):
 
     def __str__(self):
         return self.name
-
    
 class Product(models.Model):
     name = models.CharField(max_length=200,unique=True)
     type = models.CharField(max_length=300,choices=(('Pellet','Pellet'),('CRUMSS','CRUMSS')))
+    unit = models.CharField(max_length=30,default='Kg')
     pakage_weight = models.IntegerField(default=0)
     sales_price = models.FloatField(default=0)
     cost_price = models.FloatField(default=0)
