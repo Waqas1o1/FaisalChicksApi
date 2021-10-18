@@ -487,20 +487,18 @@ class PartyOrderViewSet(viewsets.ViewSet):
         return Response(response_dict)
 
     def create(self, request):
-        # if request.user.is_superuser or p.SalesOfficer(request):
-        if request:
-            try:
-                serializer = s.PartyOrderSerializer(
-                    data=request.data, context={"request": request})
-                serializer.is_valid(raise_exception=True)
-                serializer.save()
-                dict_response = {"error": False,
-                                "message": "Data Save Successfully","data":serializer.data}
-            except ValueError as err:
-                dict_response = {"error": True, "message": err}
-            except:
-                dict_response = {"error": True,
-                                "message": "Error During Saving Data"}
+        try:
+            serializer = s.PartyOrderSerializer(
+                data=request.data, context={"request": request})
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            dict_response = {"error": False,
+                            "message": "Data Save Successfully","data":serializer.data}
+        except ValueError as err:
+            dict_response = {"error": True, "message": err}
+        except:
+            dict_response = {"error": True,
+                            "message": "Error During Saving Data"}
 
         return JsonResponse(dict_response)
 
@@ -514,45 +512,37 @@ class PartyOrderViewSet(viewsets.ViewSet):
         return Response({"error": False, "message": "Single Data Fetch", "data": serializer_data})
 
     def update(self, request, pk=None):
-        if request.user.is_superuser or p.SalesOfficer(request):
-            try:
-                queryset = m.PartyOrder.objects.all()
-                query = get_object_or_404(queryset, pk=pk)
-                serializer = s.PartyOrderSerializer(
-                    query, data=request.data, context={"request": request})
-                serializer.is_valid(raise_exception=True)
-                serializer.save()
-                dict_response = {"error": False,
-                                "message": "Successfully Updated Data"}
-            except:
-                dict_response = {"error": True,
-                                "message": "Error During Updating Data"}
+        try:
+            queryset = m.PartyOrder.objects.all()
+            query = get_object_or_404(queryset, pk=pk)
+            serializer = s.PartyOrderSerializer(
+                query, data=request.data, context={"request": request})
+            serializer.is_valid()
+            print(serializer.errors)
+            serializer.save()
+            dict_response = {"error": False,
+                            "message": "Successfully Updated Data"}
+        except:
+            dict_response = {"error": True,
+                            "message": "Error During Updating Data"}
 
-            return Response(dict_response)
+        return Response(dict_response)
 
     def delete(self, request, pk=None):
-        # if request.user.is_superuser or p.SalesOfficer(request):
-        # try:
         m.PartyOrder.objects.get(id=pk).delete()
         dict_response = {"error": False,
                         "message": "Successfully Deleted"}
-        # except:
-        #     dict_response = {"error": True,
-        #                     "message": "Error During Deleted Data "}
-
         return Response(dict_response)
 
 class DispatchTableViewSet(viewsets.ViewSet):
 
     def list(self, request):
-        # if request.user.is_superuser or p.SalesOfficer(request) or p.Accountant(request):
-        if request:
-            data = m.DispatchTable.objects.all()
-            serializer = s.DispatchTableSerializer(
-                data, many=True, context={"request": request})
-            response_dict = {
-                "error": False, "message": "All List Data", "data": serializer.data}
-            return Response(response_dict)
+        data = m.DispatchTable.objects.all()
+        serializer = s.DispatchTableSerializer(
+            data, many=True, context={"request": request})
+        response_dict = {
+            "error": False, "message": "All List Data", "data": serializer.data}
+        return Response(response_dict)
 
     def create(self, request):
         # if request.user.is_superuser or p.SalesOfficer(request):
@@ -584,9 +574,7 @@ class DispatchTableViewSet(viewsets.ViewSet):
         return JsonResponse(dict_response)
 
     def retrieve(self, request, pk=None):
-        # if request.user.is_superuser or p.SalesOfficer(request) or p.Accountant(request):
-        queryset = m.DispatchTable.objects.all()
-        query = get_object_or_404(queryset, pk=pk)
+        query = m.DispatchTable.objects.get(party_order__id=pk)
         serializer = s.DispatchTableSerializer(
             query, context={"request": request})
         serializer_data = serializer.data
@@ -595,11 +583,10 @@ class DispatchTableViewSet(viewsets.ViewSet):
     def update(self, request, pk=None):
         if request.user.is_superuser or p.SalesOfficer(request):
             try:
-                queryset = m.DispatchTable.objects.all()
-                query = get_object_or_404(queryset, pk=pk)
+                query = m.DispatchTable.objects.get(party_order__id=pk)
                 serializer = s.DispatchTableSerializer(
                     query, data=request.data, context={"request": request})
-                serializer.is_valid(raise_exception=True)
+                serializer.is_valid()
                 serializer.save()
                 dict_response = {"error": False,
                                 "message": "Successfully Updated Data"}

@@ -185,10 +185,9 @@ class PartyOrderSerializer(serializers.ModelSerializer):
         response = super().to_representation(instance)
         response['party'] = PartySerializer(instance.party).data
         response['sale_officer'] = SalesOfficerSerializer(instance.sale_officer).data
-        # if response['status'] == 'Delivered':
-        #     print('Here')
-        #     # dt = m.DispatchTable.objects.get(party_order=instance)
-        #     # response['dispatch'] = DispatchTableSerializer(dt).data
+        if response['status'] == 'Delivered':
+            dt = m.DispatchTable.objects.get(party_order=instance)
+            response['dispatch'] = DispatchTableSerializer(dt).data
         return response
 
 
