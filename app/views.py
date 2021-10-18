@@ -479,14 +479,12 @@ class DiscountCategoryViewSet(viewsets.ViewSet):
 class PartyOrderViewSet(viewsets.ViewSet):
 
     def list(self, request):
-        # if request.user.is_superuser or p.SalesOfficer(request) or p.Accountant(request):
-        if request:
-            data = m.PartyOrder.objects.all().order_by('-id')
-            serializer = s.PartyOrderSerializer(
-                data, many=True, context={"request": request})
-            response_dict = {
-                "error": False, "message": "All List Data", "data": serializer.data}
-            return Response(response_dict)
+        data = m.PartyOrder.objects.all().order_by('-id')
+        serializer = s.PartyOrderSerializer(
+            data, many=True, context={"request": request})
+        response_dict = {
+            "error": False, "message": "All List Data", "data": serializer.data}
+        return Response(response_dict)
 
     def create(self, request):
         # if request.user.is_superuser or p.SalesOfficer(request):
@@ -626,29 +624,27 @@ class DispatchTableViewSet(viewsets.ViewSet):
 class PartyOrderProductViewSet(viewsets.ViewSet):
 
     def list(self, request):
-        if request.user.is_superuser or p.SalesOfficer(request) or p.Accountant(request):
-            data = m.PartyOrderProduct.objects.all()
-            serializer = s.PartyOrderProductSerializer(
-                data, many=True, context={"request": request})
-            response_dict = {
-                "error": False, "message": "All List Data", "data": serializer.data}
-            return Response(response_dict)
+        data = m.PartyOrderProduct.objects.all()
+        serializer = s.PartyOrderProductSerializer(
+            data, many=True, context={"request": request})
+        response_dict = {
+            "error": False, "message": "All List Data", "data": serializer.data}
+        return Response(response_dict)
 
     def create(self, request):
-        # if request.user.is_superuser or p.SalesOfficer(request):
-        if request:
-            try:
-                serializer = s.PartyOrderProductSerializer(
-                    data=request.data, context={"request": request})
-                serializer.is_valid(raise_exception=True)
-                serializer.save()
-                dict_response = {"error": False,
-                                "message": "Data Save Successfully"}
-            except ValueError as err:
-                dict_response = {"error": True, "message": err}
-            except:
-                dict_response = {"error": True,
-                                "message": "Error During Saving Data"}
+        try:
+            serializer = s.PartyOrderProductSerializer(
+                data=request.data, context={"request": request})
+            serializer.is_valid(raise_exception=True)
+            print(serializer.errors)
+            serializer.save()
+            dict_response = {"error": False,
+                            "message": "Data Save Successfully"}
+        except ValueError as err:
+            dict_response = {"error": True, "message": err}
+        except:
+            dict_response = {"error": True,
+                            "message": "Error During Saving Data"}
 
         return JsonResponse(dict_response)
 
@@ -837,7 +833,8 @@ class GenratePreOrder(viewsets.ViewSet):
             party_order = request.data['party_order']
             serializer = s.PartyOrderSerializer(
                     data=party_order, context={"request": request})
-            serializer.is_valid(raise_exception=True)
+            serializer.is_valid()
+            print(serializer.errors)
             pt = serializer.save()
             print('Party Order Save',pt.id)
             products = request.data['products']

@@ -171,6 +171,11 @@ class IncentiveLedgerSerializer(serializers.ModelSerializer):
 
 # UI
 
+class DispatchTableSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = m.DispatchTable
+        fields = '__all__'
+
 class PartyOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = m.PartyOrder
@@ -180,13 +185,12 @@ class PartyOrderSerializer(serializers.ModelSerializer):
         response = super().to_representation(instance)
         response['party'] = PartySerializer(instance.party).data
         response['sale_officer'] = SalesOfficerSerializer(instance.sale_officer).data
+        # if response['status'] == 'Delivered':
+        #     print('Here')
+        #     # dt = m.DispatchTable.objects.get(party_order=instance)
+        #     # response['dispatch'] = DispatchTableSerializer(dt).data
         return response
 
-
-class DispatchTableSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = m.DispatchTable
-        fields = '__all__'
 
 
 class PartyOrderProductSerializer(serializers.ModelSerializer):
