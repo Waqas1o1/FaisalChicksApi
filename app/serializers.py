@@ -1,11 +1,11 @@
-from django.db.models import fields
 from rest_framework import serializers
 from . import models as m
 from django.contrib.auth.models import User
 # Table
-class UserSerializer(serializers.ModelSerializer):
-    model = User
-    fields = '__all__'
+class UsersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'email', 'first_name', 'last_name','password','last_login')
     
 class DiscountCategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -28,10 +28,10 @@ class SalesOfficerSerializer(serializers.ModelSerializer):
     class Meta:
         model = m.SalesOfficer
         fields = '__all__'
-    # def to_representation(self, instance):
-    #     response = super().to_representation(instance)
-    #     response['user'] = UserSerializer(instance.user).data
-    #     return response
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        response['user'] = UsersSerializer(instance.user).data
+        return response
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:

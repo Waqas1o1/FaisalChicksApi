@@ -1,4 +1,5 @@
-from django.http.response import HttpResponse, JsonResponse
+from django.contrib.auth.models import User
+from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from rest_framework  import viewsets,generics
 from rest_framework.response import Response
@@ -7,6 +8,8 @@ from app import serializers as s
 from app import permisions as p
 from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
+from utils.enums import Groups as g
+from django.contrib.auth.models import Group
 # Create your views here.
 # Authentication
  
@@ -105,14 +108,25 @@ class SalesOfficerViewSet(viewsets.ViewSet):
         response_dict = {
             "error": False, "message": "All List Data", "data": serializer.data}
         return Response(response_dict)
+    
     def create(self, request):
         try:
+            # user
             username = request.data['username']
+            email = request.data['email']
             password = request.data['password']
-            repassword = request.data['repassword']
-            serializer = s.SalesOfficerSerializer(data=request.data, context={"request": request})
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
+            name = request.data['name']
+            user = User.objects.create_user(username, email, password)
+            user.first_name  = name
+            user.last_name  = 'Sales Officer'
+            grp = Group.objects.get(name=g.SalesOfficer.value)
+            user.groups.add(grp)
+            user.save()
+            # SalesOfficer
+            commission = request.data['commission']
+            contact = request.data['contact']
+            opening_Balance = request.data['opening_Balance']
+            m.SalesOfficer(name=name,commission=commission,contact=contact,opening_Balance=opening_Balance,user=user).save()
             response_dict = {"error": False,
                             "message": "Data Save Successfully"}
         except ValueError as err:
@@ -157,7 +171,7 @@ class SalesOfficerViewSet(viewsets.ViewSet):
     def delete(self, request, pk=None):
         if request.user.is_superuser:
             try:
-                m.SalesOfficer.objects.get(id=pk).delete()
+                m.SalesOfficer.objects.get(id=pk).user.delete()
                 response_dict = {"error": False,
                                 "message": "Successfully Deleted"}
             except:
