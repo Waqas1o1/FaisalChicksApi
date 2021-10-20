@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'email', 'first_name', 'last_name','password','last_login')
+        fields = ('id','username','email', 'first_name', 'last_name','password','last_login')
     
 class DiscountCategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -176,6 +176,17 @@ class DispatchTableSerializer(serializers.ModelSerializer):
         model = m.DispatchTable
         fields = '__all__'
 
+
+class POPSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = m.PartyOrderProduct
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        response['product'] = ProductSerializer(instance.product).data
+        return response
+
 class PartyOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = m.PartyOrder
@@ -185,11 +196,12 @@ class PartyOrderSerializer(serializers.ModelSerializer):
         response = super().to_representation(instance)
         response['party'] = PartySerializer(instance.party).data
         response['sale_officer'] = SalesOfficerSerializer(instance.sale_officer).data
+        pop = m.PartyOrderProduct.objects.filter(party_order=instance)
+        response['products'] = POPSerializer(pop,many=True).data
         if response['status'] == 'Delivered':
             dt = m.DispatchTable.objects.get(party_order=instance)
             response['dispatch'] = DispatchTableSerializer(dt).data
         return response
-
 
 
 class PartyOrderProductSerializer(serializers.ModelSerializer):
@@ -202,6 +214,7 @@ class PartyOrderProductSerializer(serializers.ModelSerializer):
         response['party_order'] = PartyOrderSerializer(instance.party_order).data
         response['product'] = ProductSerializer(instance.product).data
         return response
+
 
 
 class RecoverySerializer(serializers.ModelSerializer):
