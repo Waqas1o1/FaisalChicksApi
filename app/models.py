@@ -616,12 +616,12 @@ class PartyOrder(models.Model):
             super(PartyOrder, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        if self.status == 'Confirmed':
+        if self.status == 'Delivered':
             self.pl.delete();
             self.plc1.delete();
             self.plc2.delete();
             self.dl.delete()
-        elif self.status == 'Delivered':
+        elif self.status == 'Confirmed':
             self.sol.delete()
             self.sl.delete()
             self.il.delete()
