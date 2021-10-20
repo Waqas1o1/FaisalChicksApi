@@ -475,7 +475,7 @@ class PartyOrderViewSet(viewsets.ViewSet):
 
     def list(self, request):
         if (request.user.groups.first().name == g.Dispatcher.value):
-            data = m.PartyOrder.objects.filter(Q(status='Confirmed')| Q(status='Delivered')).order_by('-id')
+            data = m.PartyOrder.objects.filter(Q(status='Confirmed')| Q(status='Delivered') ).order_by('-id')
         else:
             data = m.PartyOrder.objects.all().order_by('-id')
         serializer = s.PartyOrderSerializer(
