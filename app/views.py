@@ -17,7 +17,9 @@ from django.contrib.auth.models import Group
 # CRUD oprations
 class PartyViewSet(viewsets.ViewSet):
     def list(self, request):
-        user = request.user.groups.all().first().name
+        user = request.user.groups.all().first()
+        if user:
+            user = user.name
         if user == 'salesofficer':
             sales_officer = m.SalesOfficer.objects.get(user=request.user)
             data = m.Party.objects.filter(sale_officer=sales_officer)
@@ -476,7 +478,9 @@ class PartyOrderViewSet(viewsets.ViewSet):
     def list(self, request):
         if (request.user.groups.first().name == g.Dispatcher.value):
             data = m.PartyOrder.objects.filter(Q(status='Confirmed')| Q(status='Delivered') ).order_by('-id')
-        else:
+        elif (request.user.groups.first().name == g.SalesOfficer.value):
+            data = m.PartyOrder.objects.filter(sale_officer__user=request.user).order_by('-id')
+        else:    
             data = m.PartyOrder.objects.all().order_by('-id')
         serializer = s.PartyOrderSerializer(
             data, many=True, context={"request": request})
@@ -539,7 +543,12 @@ class PartyOrderViewSet(viewsets.ViewSet):
     def delete(self, request, pk=None):
         if (request.user.groups.first().name == g.Dispatcher.value):
             return Response({"error": True,"message": "Un Athneticated"})
-        m.PartyOrder.objects.get(id=pk).delete()
+        po = m.PartyOrder.objects.get(id=pk)
+        m.DispatchTable.objects.get(party_order=po).delete()
+        po.delete()
+        pop = m.PartyOrderProduct.objects.filter(party_order=po)
+        for i in pop:
+            i.delete()
         dict_response = {"error": False,
                         "message": "Successfully Deleted"}
         return Response(dict_response)

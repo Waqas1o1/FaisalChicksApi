@@ -40,7 +40,7 @@ class LoginAPI(KnoxLoginView):
                 so = m.SalesOfficer.objects.get(user=user)
                 temp_list.data['salesofficer'] = {'name':so.name,'id':so.id}
             if person == g.Dispatcher.value:
-                temp_list.data['dispatcher'] = {'name':request.user.username,'id':user.id}
+                temp_list.data['dispatcher'] = {'name':request.user.first_name,'id':user.id}
                 
         return Response({"data":temp_list.data})
     

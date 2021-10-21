@@ -536,7 +536,7 @@ class PartyOrder(models.Model):
     party = models.ForeignKey(Party,on_delete=models.CASCADE)
     sale_officer = models.ForeignKey(SalesOfficer,on_delete=models.CASCADE)
     status = models.CharField(max_length=50, choices=[('Pending', 'Pending'), ('Confirmed','Confirmed'),('Delivered','Delivered')], default='Pending')
-    description = models.CharField(max_length=50)
+    description = models.CharField(max_length=50,blank=True,null=True)
     freight = models.FloatField(default=0)
    
     
@@ -658,6 +658,18 @@ class Recovery(models.Model):
     def __str__(self):
         return str(self.id) + ':' + self.sale_officer.name
 
+    def delete(self, *args, **kwargs):
+        if self.status == 'Approved':
+            self.pl.delete();
+            if self.payment_method == 'Bank':
+                self.bl.delete();
+            if self.payment_method == 'Clearing':
+                self.cll.delete();
+            if self.payment_method == 'Cash':
+                self.cl.delete();
+            
+
+        super(Recovery, self).delete()
     
     def save(self, *args, **kwargs):
         if self.id == None:
