@@ -629,7 +629,6 @@ class PartyOrder(models.Model):
 
         super(PartyOrder, self).delete()
 
-
 class PartyOrderProduct(models.Model):
     party_order = models.ForeignKey(PartyOrder,on_delete=models.CASCADE)
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
