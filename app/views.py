@@ -1104,11 +1104,11 @@ def Test(request):
 
 
 def GetPartyOrderByAmount(request,party,amount):
-    party_orders = m.PartyOrder.objects.filter(Q(status='Pending',party__id=party) & ~Q(pandding_amount=0))
+    party_orders = m.PartyOrder.objects.filter(Q(party__id=party) & Q(pandding_amount__gte=0))
     count = 0
     send = []
     if amount == 0:
-        save  = m.PartyOrder.objects.filter(Q(status='Pending',party__id=party)  & ~Q(pandding_amount=0)).first()
+        save  = m.PartyOrder.objects.filter(Q(party__id=party) & ~Q(pandding_amount__gte=0)).first()
         if save:
             send.append(save)
     else:
