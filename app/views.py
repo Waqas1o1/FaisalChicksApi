@@ -124,12 +124,14 @@ class SalesOfficerViewSet(viewsets.ViewSet):
             user.last_name  = 'Sales Officer'
             grp = Group.objects.get(name=g.SalesOfficer.value)
             user.groups.add(grp)
-            user.save()
+            
             # SalesOfficer
             commission = request.data['commission']
             contact = request.data['contact']
             opening_Balance = request.data['opening_Balance']
             m.SalesOfficer(name=name,commission=commission,contact=contact,opening_Balance=opening_Balance,user=user).save()
+            user.save()
+            
             response_dict = {"error": False,
                             "message": "Data Save Successfully"}
         except ValueError as err:

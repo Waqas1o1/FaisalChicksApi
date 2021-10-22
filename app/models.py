@@ -566,51 +566,53 @@ class PartyOrder(models.Model):
         else:
             # If Approved
             if self.status == 'Delivered':
-                pl = PartyLedger(party=self.party,sales_officer=self.sale_officer, 
-                                freight = self.freight,transaction_type='Debit',
-                                description=self.description,
-                                total_amount=self.total_amount)
-                pl.save()
-                self.pl = pl
-                pl = PartyLedger(party=self.party,sales_officer=self.sale_officer, 
-                                freight = self.freight,transaction_type='Credit',
-                                description=self.description,
-                                total_amount=self.freight)
-                pl.save()
-                self.plc1 = pl
-                pl = PartyLedger(party=self.party,sales_officer=self.sale_officer,
-                                transaction_type='Credit',
-                                description=self.description,
-                                total_amount=self.discounted_amount)
-                pl.save()
-                self.plc2 = pl
-                 # -------------------
-                dl = DiscountLedger(total_amount=self.discounted_amount,transaction_type='Debit'
-                                    ,discounted_amount=self.discounted_amount)
-                dl.save()
-                self.dl = dl
+                if not self.pl:
+                    pl = PartyLedger(party=self.party,sales_officer=self.sale_officer, 
+                                    freight = self.freight,transaction_type='Debit',
+                                    description=self.description,
+                                    total_amount=self.total_amount)
+                    pl.save()
+                    self.pl = pl
+                    pl = PartyLedger(party=self.party,sales_officer=self.sale_officer, 
+                                    freight = self.freight,transaction_type='Credit',
+                                    description=self.description,
+                                    total_amount=self.freight)
+                    pl.save()
+                    self.plc1 = pl
+                    pl = PartyLedger(party=self.party,sales_officer=self.sale_officer,
+                                    transaction_type='Credit',
+                                    description=self.description,
+                                    total_amount=self.discounted_amount)
+                    pl.save()
+                    self.plc2 = pl
+                    # -------------------
+                    dl = DiscountLedger(total_amount=self.discounted_amount,transaction_type='Debit'
+                                        ,discounted_amount=self.discounted_amount)
+                    dl.save()
+                    self.dl = dl
 
             if self.status == 'Confirmed':
-                # --------------------
-                sl = SalesLedger(total_amount=self.total_amount,transaction_type='Credit')
+                if not self.sl:
+                    # --------------------
+                    sl = SalesLedger(total_amount=self.total_amount,transaction_type='Credit')
 
-                sl.save()
-                self.sl = sl
-                # -------------------
-                sl = SalesOfficerLedger(sales_officer=self.sale_officer,transaction_type='Credit',
-                                        description = self.description,
-                                        party_order = self.id,
-                                        total_amount =self.total_amount - self.total_amount *(self.sale_officer.commission/100))
-                sl.save()
-                self.sol = sl
-                # --------------------
-                il = IncentiveLedger(total_amount=self.total_amount *(self.sale_officer.commission/100),transaction_type='Debit',description=self.description)
-                il.save()
-                self.il = il
-                # --------------------
-                fl = FreightLedger(total_amount=self.freight,freight=self.freight,transaction_type='Debit')
-                fl.save()
-                self.fl = fl
+                    sl.save()
+                    self.sl = sl
+                    # -------------------
+                    sl = SalesOfficerLedger(sales_officer=self.sale_officer,transaction_type='Credit',
+                                            description = self.description,
+                                            party_order = self.id,
+                                            total_amount =self.total_amount - self.total_amount *(self.sale_officer.commission/100))
+                    sl.save()
+                    self.sol = sl
+                    # --------------------
+                    il = IncentiveLedger(total_amount=self.total_amount *(self.sale_officer.commission/100),transaction_type='Debit',description=self.description)
+                    il.save()
+                    self.il = il
+                    # --------------------
+                    fl = FreightLedger(total_amount=self.freight,freight=self.freight,transaction_type='Debit')
+                    fl.save()
+                    self.fl = fl
                
                 # ##################
             super(PartyOrder, self).save(*args, **kwargs)
