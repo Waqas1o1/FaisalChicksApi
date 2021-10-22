@@ -544,7 +544,8 @@ class PartyOrderViewSet(viewsets.ViewSet):
         if (request.user.groups.first().name == g.Dispatcher.value):
             return Response({"error": True,"message": "Un Athneticated"})
         po = m.PartyOrder.objects.get(id=pk)
-        m.DispatchTable.objects.get(party_order=po).delete()
+        if po.status == 'Delivered':
+            m.DispatchTable.objects.get(party_order=po).delete()
         po.delete()
         pop = m.PartyOrderProduct.objects.filter(party_order=po)
         for i in pop:
