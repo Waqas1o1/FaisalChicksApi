@@ -12,7 +12,7 @@ SECRET_KEY = '#65$t=5cn-px8rhp63z0gsf$z#ciz1--sydy-tly+mq2$22ukd'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['fasialchicks.herokuapp.com']
+ALLOWED_HOSTS = ['fasialchicks.herokuapp.com','https://heenterprises.herokuapp.com/']
 
 
 # Application definition
@@ -123,6 +123,7 @@ ORS_ORIGIN_WHITELIST = [
     'https://technoventive.herokuapp.com',
     'http://technoventive.herokuapp.com',
     'http://localhost:3000',
+    'https://heenterprises.herokuapp.com/'
 ]
 # Media
 MEDIA_URL = '/media/'
