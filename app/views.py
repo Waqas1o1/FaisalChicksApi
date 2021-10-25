@@ -1,5 +1,4 @@
 from django.contrib.auth.models import User
-from django.http import response
 from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from rest_framework  import viewsets,generics
@@ -7,10 +6,13 @@ from rest_framework.response import Response
 from app import models as m
 from app import serializers as s
 from app import permisions as p
-from django.db.models import Q
+from django.db.models import Q, F
 from django.views.decorators.csrf import csrf_exempt
 from utils.enums import Groups as g
 from django.contrib.auth.models import Group
+
+
+
 # Create your views here.
 # Authentication
  
@@ -525,14 +527,15 @@ class PartyOrderViewSet(viewsets.ViewSet):
             serializer = s.PartyOrderSerializer(
                 query, data=request.data, context={"request": request})
             serializer.is_valid()
-            
+            m.PartyOrderProduct.objects.filter(party_order__id=pk).delete()
+
             for p in request.data['products']:
-                pop = m.PartyOrderProduct.objects.get(id=p['id'])
                 m.PartyOrderProduct(party_order=query,
-                                    product=m.Product.objects.get(id=p['product']['id']),
+                                    product=m.Product.objects.get(name=p['product']['name']),
                                     qty=p['qty'],
                                     rate=p['rate']).save()
-                pop.delete()
+            
+                
             serializer.save()
             dict_response = {"error": False,
                             "message": "Successfully Updated Data"}
@@ -562,6 +565,7 @@ class DispatchTableViewSet(viewsets.ViewSet):
         data = m.DispatchTable.objects.all()
         serializer = s.DispatchTableSerializer(
             data, many=True, context={"request": request})
+
         response_dict = {
             "error": False, "message": "All List Data", "data": serializer.data}
         return Response(response_dict)
@@ -636,6 +640,7 @@ class PartyOrderProductViewSet(viewsets.ViewSet):
         data = m.PartyOrderProduct.objects.all()
         serializer = s.PartyOrderProductSerializer(
             data, many=True, context={"request": request})
+        print(pd)
         response_dict = {
             "error": False, "message": "All List Data", "data": serializer.data}
         return Response(response_dict)
@@ -698,14 +703,15 @@ class PartyOrderProductViewSet(viewsets.ViewSet):
 class RecoveryViewSet(viewsets.ViewSet):
 
     def list(self, request):
-        # if request.user.is_superuser or p.SalesOfficer(request) or p.Accountant(request):
-        if request:
+        if (request.user.groups.first().name == g.SalesOfficer.value):
+            data = m.Recovery.objects.filter(sale_officer__user=request.user).order_by('-id')
+        else:
             data = m.Recovery.objects.all()
-            serializer = s.RecoverySerializer(
-                data, many=True, context={"request": request})
-            response_dict = {
-                "error": False, "message": "All List Data", "data": serializer.data}
-            return Response(response_dict)
+        serializer = s.RecoverySerializer(
+            data, many=True, context={"request": request})
+        response_dict = {
+            "error": False, "message": "All List Data", "data": serializer.data}
+        return Response(response_dict)
 
     def create(self, request):
         # if request.user.is_superuser or p.SalesOfficer(request):
@@ -757,15 +763,13 @@ class RecoveryViewSet(viewsets.ViewSet):
         return Response(dict_response)
 
     def delete(self, request, pk=None):
-        # if request.user.is_superuser or p.SalesOfficer(request) :
-        if request: 
-            try:
-                m.Recovery.objects.get(id=pk).delete()
-                dict_response = {"error": False,
-                                "message": "Successfully Deleted"}
-            except:
-                dict_response = {"error": True,
-                                "message": "Error During Deleted Data "}
+        try:
+            m.Recovery.objects.get(id=pk).delete()
+            dict_response = {"error": False,
+                            "message": "Successfully Deleted"}
+        except:
+            dict_response = {"error": True,
+                            "message": "Error During Deleted Data "}
 
             return Response(dict_response)
 
@@ -904,16 +908,14 @@ class DispatchViewSet(viewsets.ViewSet):
         return Response(response_dict)
 
 # Post Party_order
-class GenratePreOrder(viewsets.ViewSet):
+class GenratePartOrder(viewsets.ViewSet):
     def create(self, request):
         try:
             party_order = request.data['party_order']
             serializer = s.PartyOrderSerializer(
                     data=party_order, context={"request": request})
             serializer.is_valid()
-            print(serializer.errors)
             pt = serializer.save()
-            print('Party Order Save',pt.id)
             products = request.data['products']
             for product in products:
                 save_dict = {
@@ -932,9 +934,21 @@ class GenratePreOrder(viewsets.ViewSet):
                     dict_response = {"error": True,
                             "message": "Error in Saving Product"}
     
-            
+            recovery = request.data['recovery']
+            if recovery['amount']:
+                if (int(recovery['amount']) > 0 or recovery['amount'] != None):
+                    recovery['party_order'] = pt.id
+                    print(recovery)
+                    try:
+                        serializer = s.RecoverySerializer(
+                            data=recovery, context={"request": request})
+                        serializer.is_valid()
+                        serializer.save()
+                    except:
+                        pt.delete()
+                   
             dict_response = {"error": False,
-                            "message": "Data Save Successfully"}
+                                "message": "Data Save Successfully"}
         except ValueError as err:
             dict_response = {"error": True, "message": err}
         except:
@@ -1101,7 +1115,6 @@ def Test(request):
     response_dict = {'Party':party,'SalesOfficer':salesofficer,'Sales':sales,'Bank':bank,'Freight':freight
                     ,'Discount':discount,'Cash':cash,'Clearing':cleariing,'Incentive':incentive }
     return render(request,'test.html',response_dict)
-
 
 def GetPartyOrderByAmount(request,party,amount):
     party_orders = m.PartyOrder.objects.filter(Q(party__id=party) & Q(pandding_amount__gte=0))

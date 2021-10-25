@@ -649,7 +649,7 @@ class Recovery(models.Model):
     payment_method = models.CharField(max_length=20,choices=(('Cash','Cash'),('Bank','Bank'),('Clearing','Clearing'))) 
     bank = models.ForeignKey(Bank,on_delete=models.CASCADE,null=True,blank=True)
     amount = models.FloatField()
-    description = models.CharField(max_length=50)
+    description = models.CharField(blank=True,null=True,max_length=50)
 
     pl = models.ForeignKey(PartyLedger,on_delete=models.CASCADE,null=True,blank=True)
     bl = models.ForeignKey(BankLedger,on_delete=models.CASCADE,null=True,blank=True)
@@ -713,7 +713,7 @@ class Recovery(models.Model):
                                 total_amount=(self.amount))
                     ccl.save()
                     self.cll = ccl
-        super(Recovery, self).save(*args, **kwargs)  
+            super(Recovery, self).save(*args, **kwargs)  
 
 class DispatchTable(models.Model):
     driver = models.CharField(max_length=300)

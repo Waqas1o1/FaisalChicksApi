@@ -13,7 +13,7 @@ router.register("PartyOrder", views.PartyOrderViewSet, basename="PartyOrder")
 router.register("DispatchTable", views.DispatchTableViewSet, basename="DispatchTable")
 router.register("PartyOrderProduct", views.PartyOrderProductViewSet, basename="PartyOrderProduct")
 router.register("Recovery", views.RecoveryViewSet, basename="Recovery")
-router.register("GenratePartyOrder", views.GenratePreOrder, basename="GenratePartyOrder")
+router.register("GenratePartyOrder", views.GenratePartOrder, basename="GenratePartyOrder")
 # Authentication
 
 

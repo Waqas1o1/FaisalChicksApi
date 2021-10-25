@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from . import models as m
+from django.db.models import F, Sum
 from django.contrib.auth.models import User
 # Table
 class UsersSerializer(serializers.ModelSerializer):
@@ -191,6 +192,8 @@ class PartyOrderSerializer(serializers.ModelSerializer):
         response['sale_officer'] = SalesOfficerSerializer(instance.sale_officer).data
         pop = m.PartyOrderProduct.objects.filter(party_order=instance)
         response['products'] = POPSerializer(pop,many=True).data
+        pd = m.PartyOrderProduct.objects.filter(party_order=instance).annotate(product__sum=Sum(F('qty') * F('rate')))
+        response['products__sum'] = pd[0].product__sum
         if response['status'] == 'Delivered':
             dt = m.DispatchTable.objects.get(party_order=instance)
             response['dispatch'] = DispatchTableSerializer(dt).data
