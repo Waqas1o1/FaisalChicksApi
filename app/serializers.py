@@ -192,8 +192,12 @@ class PartyOrderSerializer(serializers.ModelSerializer):
         response['sale_officer'] = SalesOfficerSerializer(instance.sale_officer).data
         pop = m.PartyOrderProduct.objects.filter(party_order=instance)
         response['products'] = POPSerializer(pop,many=True).data
-        pd = m.PartyOrderProduct.objects.filter(party_order=instance).annotate(product__sum=Sum(F('qty') * F('rate')))
-        response['products__sum'] = pd[0].product__sum
+        pd = m.PartyOrderProduct.objects.filter(party_order=instance)
+        sum = 0
+        for p in pd:
+            sum += p.qty
+        response['pdt_qty__sum'] = sum
+
         if response['status'] == 'Delivered':
             dt = m.DispatchTable.objects.get(party_order=instance)
             response['dispatch'] = DispatchTableSerializer(dt).data
@@ -210,7 +214,6 @@ class PartyOrderProductSerializer(serializers.ModelSerializer):
         response['party_order'] = PartyOrderSerializer(instance.party_order).data
         response['product'] = ProductSerializer(instance.product).data
         return response
-
 
 
 class RecoverySerializer(serializers.ModelSerializer):
@@ -236,4 +239,3 @@ class SalesOfficerReceivingSerializer(serializers.ModelSerializer):
         response = super().to_representation(instance)
         response['sales_officer'] = SalesOfficerSerializer(instance.sales_officer).data
         return response
-

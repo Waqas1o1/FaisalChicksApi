@@ -14,6 +14,7 @@ router.register("DispatchTable", views.DispatchTableViewSet, basename="DispatchT
 router.register("PartyOrderProduct", views.PartyOrderProductViewSet, basename="PartyOrderProduct")
 router.register("Recovery", views.RecoveryViewSet, basename="Recovery")
 router.register("GenratePartyOrder", views.GenratePartOrder, basename="GenratePartyOrder")
+router.register("LedgerAdjustments", views.LedgerAdjustments, basename="LedgerAdjustments")
 # Authentication
 
 

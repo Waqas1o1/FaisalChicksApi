@@ -8,6 +8,7 @@ from app import serializers as s
 from app import permisions as p
 from django.db.models import Q, F
 from django.views.decorators.csrf import csrf_exempt
+from utils.utils import GetLegder
 from utils.enums import Groups as g
 from django.contrib.auth.models import Group
 
@@ -481,13 +482,13 @@ class PartyOrderViewSet(viewsets.ViewSet):
 
     def list(self, request):
         if (request.user.groups.first().name == g.Dispatcher.value):
-            data = m.PartyOrder.objects.filter(Q(status='Confirmed')| Q(status='Delivered') ).order_by('-id')
+            data = m.PartyOrder.objects.filter(Q(status='Confirmed')| Q(status='Delivered') )
         elif (request.user.groups.first().name == g.SalesOfficer.value):
-            data = m.PartyOrder.objects.filter(sale_officer__user=request.user).order_by('-id')
+            data = m.PartyOrder.objects.filter(sale_officer__user=request.user)
         else:    
-            data = m.PartyOrder.objects.all().order_by('-id')
+            data = m.PartyOrder.objects.all()
         serializer = s.PartyOrderSerializer(
-            data, many=True, context={"request": request})
+            data.order_by('-id'), many=True, context={"request": request})
         response_dict = {
             "error": False, "message": "All List Data", "data": serializer.data}
         return Response(response_dict)
@@ -907,7 +908,7 @@ class DispatchViewSet(viewsets.ViewSet):
        
         return Response(response_dict)
 
-# Post Party_order
+# Post 
 class GenratePartOrder(viewsets.ViewSet):
     def create(self, request):
         try:
@@ -957,6 +958,31 @@ class GenratePartOrder(viewsets.ViewSet):
 
         return Response(dict_response)
 
+class LedgerAdjustments(viewsets.ViewSet):
+    def create(self, request):
+        try:
+            reciverLgType = request.data['reciverLgType']
+            reciverheader = request.data['reciverheader']
+            reciverPaymentType = request.data['reciverPaymentType']
+            reciverDescription = request.data['reciverDescription']
+            # To
+            senderLgType = request.data['senderLgType']
+            senderheader = request.data['senderheader']
+            senderPaymentType = request.data['senderPaymentType']
+            senderDescription = request.data['senderDescription']
+            amount = request.data['senderAmount']
+            reciver_lg = GetLegder(reciverLgType,reciverheader,reciverDescription,float(amount),reciverPaymentType);
+            sender_lg = GetLegder(senderLgType,senderheader,senderDescription,float(amount),senderPaymentType);
+            
+            reciver_lg.save()
+            sender_lg.save()
+            dict_response = {"error": False,
+                            "message": "Successfuly saved"}
+        except:
+            dict_response = {"error": True,
+                            "message": "Error During Saving Data"}
+        return Response(dict_response)
+    
 # Change Status
 
 def ChangePartyOrderStatus(request,id):
@@ -1012,15 +1038,13 @@ def ResetPartyOrderStatus(request,id):
  
 
 def RecoveryStatusChange(request,id):
-    # if request.user.is_superuser or p.Accountant(request):
-    if request:
-        # try:
+    try:
         r = m.Recovery.objects.get(id=id)
         r.status = 'Approved'
         r.save()
         return JsonResponse({'error':False,'data':'Successfuly Updated'})
-        # except:
-        #     return JsonResponse({'error':True,'data':'Something went"s wrong'})
+    except:
+        return JsonResponse({'error':True,'data':'Something went"s wrong'})
 
 # Ledger View
 class PartyLedgerFilter(generics.ListAPIView):
@@ -1158,3 +1182,4 @@ def Import(request):
                 m.Product(name=row['name'],type=row['type'],unit=row['unit'],pakage_weight=row['pakage_weight'],sales_price=row['sales_price'],cost_price=row['cost_price'],category=ct).save()
     
     return JsonResponse('Ok',safe=False)
+

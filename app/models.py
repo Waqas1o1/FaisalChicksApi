@@ -232,7 +232,7 @@ class Ledger(models.Model):
     
 class PartyLedger(Ledger):
     party = models.ForeignKey(Party,on_delete=models.CASCADE)
-    sales_officer = models.ForeignKey(SalesOfficer, on_delete=models.CASCADE)
+    sales_officer = models.ForeignKey(SalesOfficer, on_delete=models.CASCADE,null=True,blank=True)
     freight = models.FloatField(blank=True,null=True)
 
     def __str__(self):
@@ -543,6 +543,7 @@ class PartyOrder(models.Model):
     total_amount = models.FloatField()
     pandding_amount = models.IntegerField(blank=True,default=0)
     discounted_amount = models.FloatField(null=True, blank=True)
+    gross_total = models.FloatField(default=0)
 
 
     pl = models.ForeignKey(PartyLedger,on_delete=models.SET_NULL,null=True,blank=True, related_name='+')
@@ -560,8 +561,8 @@ class PartyOrder(models.Model):
 
     def save(self, *args, **kwargs):
         if self.id == None:
-            self.pandding_amount = self.total_amount
             self.discounted_amount = self.total_amount * (self.party.discount.discount/100) 
+            self.pandding_amount = self.total_amount
             super(PartyOrder, self).save(*args, **kwargs)
         else:
             # If Approved

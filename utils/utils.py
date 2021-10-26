@@ -1,6 +1,35 @@
 from app import models as m
 from django.db.models import Q
 
+def GetLegder(type,id,description,total_amount,transaction_type):
+    if type == 'Party':
+        pty = m.Party.objects.get(id=id)
+        return m.PartyLedger(party=pty,description=description,transaction_type=transaction_type,total_amount=total_amount)
+    elif type == 'SalesOfficer':
+        sl = m.SalesOfficer.objects.get(id=id)
+        return m.SalesOfficerLedger(sales_officer=sl,description=description,transaction_type=transaction_type,total_amount=total_amount)
+    elif type == 'Sales':
+        sl = m.SalesPerson.objects.first()
+        return m.SalesLedger(sales_person=sl,description=description,transaction_type=transaction_type,total_amount=total_amount)
+    elif type == 'Bank':
+        bk = m.Bank.objects.get(id=id)
+        return m.BankLedger(bank=bk,description=description,transaction_type=transaction_type,total_amount=total_amount)
+    elif type == 'Freight':
+        f = m.FreightPerson.objects.first()
+        return m.FreightLedger(freight_person=f,freight=total_amount,description=description,transaction_type=transaction_type,total_amount=total_amount)
+    elif type == 'Discount':
+        d = m.DiscountPerson.objects.first()
+        return m.DiscountLedger(discount_person=d,discounted_amount=0,description=description,transaction_type=transaction_type,total_amount=total_amount)
+    elif type == 'Cash':
+        c = m.CashPerson.objects.first(description=description,transaction_type=transaction_type,total_amount=total_amount)
+        return m.CashLedger(cash_person=c,)
+    elif type == 'Clearing':
+        cl = m.CashPerson.objects.first()
+        return m.ClearingLedger(clearing_person=cl,description=description,transaction_type=transaction_type,total_amount=total_amount)
+    elif type == 'Incentive':
+        i = m.IncentivePerson.objects.first()
+        return m.IncentiveLedger(incentive_person=i,description=description,transaction_type=transaction_type,total_amount=total_amount)
+ 
 
 
 def updateCurrentBalance(type,last):
