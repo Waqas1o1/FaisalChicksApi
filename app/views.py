@@ -145,35 +145,36 @@ class SalesOfficerViewSet(viewsets.ViewSet):
         return JsonResponse(response_dict)
 
     def retrieve(self, request, pk=None):
-        if request.user.is_superuser or p.Accountant(request):
-            queryset = m.SalesOfficer.objects.all()
-            query = get_object_or_404(queryset, pk=pk)
-            serializer = s.SalesOfficerSerializer(
-                query, context={"request": request})
-            serializer_data = serializer.data
-            return Response({"error": False, "message": "Single Data Fetch", "data": serializer_data})
-        else:
-            response_dict = {
-                "error": False, "message": 'UnAuthenticated Person'}
-        return JsonResponse(response_dict)
+        queryset = m.SalesOfficer.objects.all()
+        query = get_object_or_404(queryset, pk=pk)
+        serializer = s.SalesOfficerSerializer(
+            query, context={"request": request})
+        serializer_data = serializer.data
+        return Response({"error": False, "message": "Single Data Fetch", "data": serializer_data})
+       
 
     def update(self, request, pk=None):
-        if request.user.is_superuser:
-            try:
-                queryset = m.SalesOfficer.objects.all()
-                query = get_object_or_404(queryset, pk=pk)
-                serializer = s.SalesOfficerSerializer(
-                    query, data=request.data, context={"request": request})
-                serializer.is_valid(raise_exception=True)
-                serializer.save()
-                response_dict = {"error": False,
-                                "message": "Successfully Updated Data"}
-            except:
-                response_dict = {"error": True,
-                                "message": "Error During Updating Data"}
-        else:
-            response_dict = {
-                "error": False, "message": 'UnAuthenticated Person'}
+        try:
+            queryset = m.SalesOfficer.objects.all()
+            query = get_object_or_404(queryset, pk=pk)
+            request.data['user'] = query.user.id
+            query.user.username =  request.data['username'] 
+            query.user.email =  request.data['email']
+            if 'password' in request.data:
+                query.user.set_password(request.data['password'])
+                print('Here')
+            query.user.save() 
+            serializer = s.SalesOfficerSerializer(
+                query, data=request.data, context={"request": request})
+            serializer.is_valid()
+
+            serializer.save()
+            response_dict = {"error": False,
+                            "message": "Successfully Updated Data"}
+        except:
+            response_dict = {"error": True,
+                            "message": "Error During Updating Data"}
+        
         return JsonResponse(response_dict)
 
     def delete(self, request, pk=None):
@@ -673,7 +674,6 @@ class PartyOrderProductViewSet(viewsets.ViewSet):
             return Response({"error": False, "message": "Single Data Fetch", "data": serializer_data})
 
     def update(self, request, pk=None):
-        if request.user.is_superuser or p.SalesOfficer(request):
             try:
                 queryset = m.PartyOrderProduct.objects.all()
                 query = get_object_or_404(queryset, pk=pk)

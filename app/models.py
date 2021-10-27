@@ -538,7 +538,7 @@ class PartyOrder(models.Model):
     status = models.CharField(max_length=50, choices=[('Pending', 'Pending'), ('Confirmed','Confirmed'),('Delivered','Delivered')], default='Pending')
     description = models.CharField(max_length=50,blank=True,null=True)
     freight = models.FloatField(default=0)
-   
+    locations = models.TextField(default='')
     
     total_amount = models.FloatField()
     pandding_amount = models.IntegerField(blank=True,default=0)
