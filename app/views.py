@@ -351,10 +351,8 @@ class CategoryViewSet(viewsets.ViewSet):
 
 class ProductViewSet(viewsets.ViewSet):
     def list(self, request):
-        # if request.user.is_superuser or p.SalesOfficer(request) or p.Accountant(request):
         data = m.Product.objects.all()
-        serializer = s.ProductSerializer(
-            data, many=True, context={"request": request})
+        serializer = s.ProductSerializer(data, many=True, context={"request": request})
         response_dict = {
             "error": False, "message": "All List Data", "data": serializer.data}
         return Response(response_dict)
@@ -421,22 +419,20 @@ class DiscountCategoryViewSet(viewsets.ViewSet):
         return Response(response_dict)
     
     def create(self, request):
-        # if request.user.is_superuser:
-        if request:
-            try:
-                serializer = s.DiscountCategorySerializer(
-                    data=request.data, context={"request": request})
-                serializer.is_valid(raise_exception=True)
-                serializer.save()
-                dict_response = {"error": False,
-                                "message": "Data Save Successfully"}
-            except ValueError as err:
-                dict_response = {"error": True, "message": err}
-            except:
-                dict_response = {"error": True,
-                                "message": "Error During Saving Data"}
+        try:
+            serializer = s.DiscountCategorySerializer(
+                data=request.data, context={"request": request})
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            dict_response = {"error": False,
+                            "message": "Data Save Successfully"}
+        except ValueError as err:
+            dict_response = {"error": True, "message": err}
+        except:
+            dict_response = {"error": True,
+                            "message": "Error During Saving Data"}
 
-            return JsonResponse(dict_response)
+        return JsonResponse(dict_response)
 
     def retrieve(self, request, pk=None):
         # if request.user.is_superuser or p.SalesOfficer(request) or p.Accountant(request):
@@ -526,9 +522,7 @@ class PartyOrderViewSet(viewsets.ViewSet):
                                 "message": "Un Athneticated"})
             queryset = m.PartyOrder.objects.all()
             query = get_object_or_404(queryset, pk=pk)
-            serializer = s.PartyOrderSerializer(
-                query, data=request.data, context={"request": request})
-            serializer.is_valid()
+           
             m.PartyOrderProduct.objects.filter(party_order__id=pk).delete()
 
             for p in request.data['products']:
@@ -537,7 +531,9 @@ class PartyOrderViewSet(viewsets.ViewSet):
                                     qty=p['qty'],
                                     rate=p['rate']).save()
             
-                
+            serializer = s.PartyOrderSerializer(
+                query, data=request.data, context={"request": request})
+            serializer.is_valid()    
             serializer.save()
             dict_response = {"error": False,
                             "message": "Successfully Updated Data"}
@@ -707,7 +703,7 @@ class RecoveryViewSet(viewsets.ViewSet):
         if (request.user.groups.first().name == g.SalesOfficer.value):
             data = m.Recovery.objects.filter(sale_officer__user=request.user).order_by('-id')
         else:
-            data = m.Recovery.objects.all()
+            data = m.Recovery.objects.all().order_by('-id')
         serializer = s.RecoverySerializer(
             data, many=True, context={"request": request})
         response_dict = {
@@ -715,9 +711,7 @@ class RecoveryViewSet(viewsets.ViewSet):
         return Response(response_dict)
 
     def create(self, request):
-        # if request.user.is_superuser or p.SalesOfficer(request):
-        if request:
-            # try:
+        try:
             serializer = s.RecoverySerializer(
                 data=request.data, context={"request": request})
             print(request.data)
@@ -727,11 +721,11 @@ class RecoveryViewSet(viewsets.ViewSet):
             print(serializer.errors)
             dict_response = {"error": False,
                             "message": "Data Save Successfully"}
-            # except ValueError as err:
-            #     dict_response = {"error": True, "message": err}
-            # except:
-            #     dict_response = {"error": True,
-            #                     "message": "Error During Saving Data"}
+        except ValueError as err:
+            dict_response = {"error": True, "message": err}
+        except:
+            dict_response = {"error": True,
+                            "message": "Error During Saving Data"}
 
         return JsonResponse(dict_response)
 
@@ -746,8 +740,6 @@ class RecoveryViewSet(viewsets.ViewSet):
             return Response({"error": False, "message": "Single Data Fetch", "data": serializer_data})
 
     def update(self, request, pk=None):
-        # if request.user.is_superuser or p.SalesOfficer(request) or p.Accountant(request):
-        # try:
         queryset = m.Recovery.objects.all()
         query = get_object_or_404(queryset, pk=pk)
         serializer = s.RecoverySerializer(
@@ -764,15 +756,15 @@ class RecoveryViewSet(viewsets.ViewSet):
         return Response(dict_response)
 
     def delete(self, request, pk=None):
-        try:
-            m.Recovery.objects.get(id=pk).delete()
-            dict_response = {"error": False,
-                            "message": "Successfully Deleted"}
-        except:
-            dict_response = {"error": True,
-                            "message": "Error During Deleted Data "}
+        # try:
+        m.Recovery.objects.get(id=pk).delete()
+        dict_response = {"error": False,
+                        "message": "Successfully Deleted"}
+        # except:
+        #     dict_response = {"error": True,
+        #                     "message": "Error During Deleted Data "}
 
-            return Response(dict_response)
+        return Response(dict_response)
 
 class SalesOfficerReceivingViewSet(viewsets.ViewSet):
 
