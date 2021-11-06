@@ -1158,20 +1158,22 @@ def Import(request):
         type = request.POST['type']
         df = pd.read_csv(request.FILES['file'])
         for index, row in df.iterrows():
-            if type == 'Discount':
-                m.DiscountCategory(name=row['name'],discount=row['discount']).save()
-            if type == 'Party':
-                so = m.SalesOfficer.objects.get(id=row['SalesOfficer id'])
-                dt = m.DiscountCategory.objects.get(id=row['discount id'])
-                ct = m.Category.objects.get(id=row['category id'])
-                m.Party(name=row['name'],email=row['email'],contact=row['contact'],creditLimit=row['creditLimit'],salesTarget=row['salesTarget'],area=row['area'],sale_officer=so,discount=dt,category=ct,opening_Balance=row['opening_Balance'],ref_id=row['ref_id']).save()
-            if type == 'Category':
-                m.Category(name=row['name']).save()
-            if type == 'Bank':
-                m.Bank(name=row['name'],account_no=row['account_no'],opening_Balance=row['opening_Balance']).save()
-            if type == 'Product':
-                ct = m.Category.objects.get(id=row['category id'])
-                m.Product(name=row['name'],type=row['type'],unit=row['unit'],pakage_weight=row['pakage_weight'],sales_price=row['sales_price'],cost_price=row['cost_price'],category=ct).save()
-    
+            try:
+                if type == 'Discount':
+                    m.DiscountCategory(name=row['name'],discount=row['discount']).save()
+                if type == 'Party':
+                    so = m.SalesOfficer.objects.get(id=row['SalesOfficer id'])
+                    dt = m.DiscountCategory.objects.get(id=row['discount id'])
+                    ct = m.Category.objects.get(id=row['category id'])
+                    m.Party(name=row['name'],email=row['email'],contact=row['contact'],creditLimit=row['creditLimit'],salesTarget=row['salesTarget'],area=row['area'],region=row['region'],zone=row['zone'],sale_officer=so,discount=dt,category=ct,opening_Balance=row['opening_Balance'],ref_id=row['ref_id']).save()
+                if type == 'Category':
+                    m.Category(name=row['name']).save()
+                if type == 'Bank':
+                    m.Bank(name=row['name'],account_no=row['account_no'],opening_Balance=row['opening_Balance']).save()
+                if type == 'Product':
+                    ct = m.Category.objects.get(id=row['category id'])
+                    m.Product(name=row['name'],type=row['type'],unit=row['unit'],pakage_weight=row['pakage_weight'],sales_price=row['sales_price'],cost_price=row['cost_price'],category=ct).save()
+            except:
+                pass
     return JsonResponse('Ok',safe=False)
 
