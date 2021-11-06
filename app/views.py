@@ -49,9 +49,7 @@ class PartyViewSet(viewsets.ViewSet):
         except:
             dict_response = {"error": True,
                             "message": "Error During Saving Data"}
-        # else:
-        #     dict_response = {
-        #         "error": True, "message": 'UnAuthenticated Person'}
+      
         return JsonResponse(dict_response)
 
     def retrieve(self, request, pk=None):
@@ -68,25 +66,20 @@ class PartyViewSet(viewsets.ViewSet):
                 "error": False, "message": 'UnAuthenticated Person'}
         return Response(response_dict)
     def update(self, request, pk=None):
-        # if request.user.is_superuser:
-        if request:
-            try:
-                queryset = m.Party.objects.all()
-                query = get_object_or_404(queryset, pk=pk)
-                serializer = s.PartySerializer(
-                    query, data=request.data, context={"request": request})
-                serializer.is_valid(raise_exception=True)
-                serializer.save()
-                dict_response = {"error": False,
-                                "message": "Successfully Updated Data"}
-            except:
-                dict_response = {"error": True,
-                                "message": "Error During Updating Data"}
-
-            return Response(dict_response)
+        queryset = m.Party.objects.all()
+        query = get_object_or_404(queryset, pk=pk)
+        serializer = s.PartySerializer(
+            query, data=request.data, context={"request": request})
+        serializer.is_valid()
+        if serializer.errors:
+            dict_response = {"error": True,
+                            "message": f"{serializer.errors}"}
         else:
-            response_dict = {
-                "error": True, "message": 'UnAuthenticated Person'}
+            serializer.save()
+            dict_response = {"error": False,
+                            "message": "Successfully Updated Data"}
+        return Response(dict_response)
+       
         return Response(response_dict)
 
     def delete(self, request, pk=None):
@@ -162,7 +155,6 @@ class SalesOfficerViewSet(viewsets.ViewSet):
             query.user.email =  request.data['email']
             if 'password' in request.data:
                 query.user.set_password(request.data['password'])
-                print('Here')
             query.user.save() 
             serializer = s.SalesOfficerSerializer(
                 query, data=request.data, context={"request": request})
@@ -569,7 +561,6 @@ class DispatchTableViewSet(viewsets.ViewSet):
         return Response(response_dict)
 
     def create(self, request):
-        # if request.user.is_superuser or p.SalesOfficer(request):
         try:
             bulty_no = request.data['bulty_no']
             cell_no = request.data['cell_no']
@@ -874,18 +865,20 @@ class DispatchViewSet(viewsets.ViewSet):
         
     
     def update(self, request, pk=None):
-        try:
-            queryset = User.objects.all()
-            query = get_object_or_404(queryset, pk=pk)
-            serializer = s.UsersSerializer(
-                query, data=request.data, context={"request": request})
-            serializer.is_valid(raise_exception=True)
+        
+        queryset = User.objects.all()
+        query = get_object_or_404(queryset, pk=pk)
+        serializer = s.UsersSerializer(
+            query, data=request.data, context={"request": request})
+        serializer.is_valid()
+        if serializer.errors:
+            dict_response = {"error": True,
+                            "message": f"{serializer.error_messages}"}
+        else:
             serializer.save()
             dict_response = {"error": False,
                             "message": "Successfully Updated Data"}
-        except:
-            dict_response = {"error": True,
-                            "message": "Error During Updating Data"}
+       
 
         return Response(dict_response)
 
