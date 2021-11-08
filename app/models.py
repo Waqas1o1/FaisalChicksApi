@@ -702,7 +702,9 @@ class Recovery(models.Model):
     bank = models.ForeignKey(Bank,on_delete=models.CASCADE,null=True,blank=True)
     amount = models.FloatField()
     description = models.CharField(blank=True,null=True,max_length=50)
-
+    # Images 
+    attachments = models.FileField(null=True,blank=True,upload_to='Recovery Attachments')
+    # Ledgers
     sl = models.ForeignKey(SalesOfficerLedger,on_delete=models.CASCADE,null=True,blank=True)
     pl = models.ForeignKey(PartyLedger,on_delete=models.CASCADE,null=True,blank=True)
     bl = models.ForeignKey(BankLedger,on_delete=models.CASCADE,null=True,blank=True)

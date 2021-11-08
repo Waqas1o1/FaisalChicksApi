@@ -36,35 +36,27 @@ class PartyViewSet(viewsets.ViewSet):
         return Response(response_dict)
 
     def create(self, request):
-        # if request.user.is_superuser:
-        try:
-            serializer = s.PartySerializer(data=request.data)
-            serializer.is_valid(raise_exception=False)
-            print(serializer.errors)
-            serializer.save()
+        serializer = s.PartySerializer(data=request.data)
+        serializer.is_valid()
+        serializer.save()
+        if serializer.errors:
+            dict_response = {"error": True, "message": f"{serializer.errors}"}
+        else:
             dict_response = {"error": False,
                             "message": "Data Save Successfully"}
-        except ValueError as err:
-            dict_response = {"error": True, "message": err}
-        except:
-            dict_response = {"error": True,
-                            "message": "Error During Saving Data"}
+
       
         return JsonResponse(dict_response)
 
     def retrieve(self, request, pk=None):
-        if request.user.is_superuser or p.SalesOfficer(request) or p.Accountant :
-            queryset = m.Party.objects.all()
-            query = get_object_or_404(queryset, pk=pk)
-            serializer = s.PartySerializer(
-                query, context={"request": request})
-            serializer_data = serializer.data
+        queryset = m.Party.objects.all()
+        query = get_object_or_404(queryset, pk=pk)
+        serializer = s.PartySerializer(
+            query, context={"request": request})
+        serializer_data = serializer.data
         
-            return Response({"error": False, "message": "Single Data Fetch", "data": serializer_data})
-        else:
-            response_dict = {
-                "error": False, "message": 'UnAuthenticated Person'}
-        return Response(response_dict)
+        return Response({"error": False, "message": "Single Data Fetch", "data": serializer_data})
+    
     def update(self, request, pk=None):
         queryset = m.Party.objects.all()
         query = get_object_or_404(queryset, pk=pk)
@@ -702,23 +694,18 @@ class RecoveryViewSet(viewsets.ViewSet):
         return Response(response_dict)
 
     def create(self, request):
-        try:
-            serializer = s.RecoverySerializer(
-                data=request.data, context={"request": request})
-            print(request.data)
-            serializer.is_valid(raise_exception=True)
-            # print(serializer.errors)
+        serializer = s.RecoverySerializer(data=request.data, context={"request": request})
+        serializer.is_valid()
+        if serializer.errors:
+            print('Here')
+            dict_response = {"error": True,
+                            "message": f"{serializer.errors}"}
+        else:
             serializer.save()
-            print(serializer.errors)
             dict_response = {"error": False,
                             "message": "Data Save Successfully"}
-        except ValueError as err:
-            dict_response = {"error": True, "message": err}
-        except:
-            dict_response = {"error": True,
-                            "message": "Error During Saving Data"}
-
-        return JsonResponse(dict_response)
+      
+        return Response(dict_response)
 
     def retrieve(self, request, pk=None):
         # if request.user.is_superuser or p.SalesOfficer(request) or p.Accountant(request):
