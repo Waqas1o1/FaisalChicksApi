@@ -814,50 +814,50 @@ class DispatchViewSet(viewsets.ViewSet):
 # Post 
 class GenratePartOrder(viewsets.ViewSet):
     def create(self, request):
-        try:
-            party_order = request.data['party_order']
-            serializer = s.PartyOrderSerializer(
-                    data=party_order, context={"request": request})
-            serializer.is_valid()
+        party_order = request.data['party_order']
+        serializer = s.PartyOrderSerializer(
+                data=party_order, context={"request": request})
+        serializer.is_valid()
+        if serializer.errors:
+            return Response({"error": True,
+                            "message": serializer.errors['name']})
+        else: 
             pt = serializer.save()
-            products = request.data['products']
-            for product in products:
-                save_dict = {
-                    'party_order': pt.id,
-                    'product': product['product_id'],
-                    'qty':  product['qty'],
-                    'rate': product['rate']
-                }
-                try:
-                    serializer = s.PartyOrderProductSerializer(
-                            data=save_dict, context={"request": request})
-                    serializer.is_valid(raise_exception=True)
+        
+        products = request.data['products']
+        for product in products:
+            save_dict = {
+                'party_order': pt.id,
+                'product': product['product_id'],
+                'qty':  product['qty'],
+                'rate': product['rate']
+            }
+            serializer = s.PartyOrderProductSerializer(
+                    data=save_dict, context={"request": request})
+            serializer.is_valid()
+            if serializer.errors:
+                m.PartyOrderProduct.objects.get(party_order__id=save_dict['party_order']).delete()
+                return Response({"error": True,
+                                "message": serializer.errors['name']})
+            else:
+                serializer.save()
+
+        recovery = request.data['recovery']
+        if recovery['amount']:
+            if (int(recovery['amount']) > 0 or recovery['amount'] != None):
+                recovery['party_order'] = pt.id
+                serializer = s.RecoverySerializer(
+                    data=recovery, context={"request": request})
+                serializer.is_valid()
+                if serializer.errors:
+                    pt.delete()
+                    return Response({"error": True,
+                            "message": serializer.errors['name']})
+                else:
                     serializer.save()
-                except:
-                    m.PartyOrderProduct.objects.get(party_order__id=save_dict['party_order']).delete()
-                    dict_response = {"error": True,
-                            "message": "Error in Saving Product"}
-    
-            recovery = request.data['recovery']
-            if recovery['amount']:
-                if (int(recovery['amount']) > 0 or recovery['amount'] != None):
-                    recovery['party_order'] = pt.id
-                    print(recovery)
-                    try:
-                        serializer = s.RecoverySerializer(
-                            data=recovery, context={"request": request})
-                        serializer.is_valid()
-                        serializer.save()
-                    except:
-                        pt.delete()
-                   
-            dict_response = {"error": False,
-                                "message": "Data Save Successfully"}
-        except ValueError as err:
-            dict_response = {"error": True, "message": err}
-        except:
-            dict_response = {"error": True,
-                            "message": "Error During Saving Data"}
+                
+        dict_response = {"error": False,"message": "Data Save Successfully"}
+   
 
         return Response(dict_response)
 
