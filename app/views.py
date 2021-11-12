@@ -1,3 +1,4 @@
+from copy import error
 from django.contrib.auth.models import User
 from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404, render
@@ -814,17 +815,20 @@ class DispatchViewSet(viewsets.ViewSet):
 # Post 
 class GenratePartOrder(viewsets.ViewSet):
     def create(self, request):
+        products = request.data['products']
+        if not products:
+            return Response({"error": True,
+                            "message": {'Product': 'Add atlest 1 Product'}})
         party_order = request.data['party_order']
         serializer = s.PartyOrderSerializer(
                 data=party_order, context={"request": request})
         serializer.is_valid()
         if serializer.errors:
             return Response({"error": True,
-                            "message": serializer.errors['name']})
+                            "message": serializer.errors})
         else: 
             pt = serializer.save()
         
-        products = request.data['products']
         for product in products:
             save_dict = {
                 'party_order': pt.id,
