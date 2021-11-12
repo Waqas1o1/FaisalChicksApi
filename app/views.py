@@ -850,13 +850,15 @@ class GenratePartOrder(viewsets.ViewSet):
         if recovery['amount']:
             if (int(recovery['amount']) > 0 or recovery['amount'] != None):
                 recovery['party_order'] = pt.id
+                recovery['party'] = party_order['party']
+                recovery['sale_officer'] = party_order['sale_officer']
                 serializer = s.RecoverySerializer(
                     data=recovery, context={"request": request})
                 serializer.is_valid()
                 if serializer.errors:
                     pt.delete()
                     return Response({"error": True,
-                            "message": serializer.errors['name']})
+                            "message": serializer.errors})
                 else:
                     serializer.save()
                 
@@ -945,13 +947,13 @@ def ResetPartyOrderStatus(request,id):
  
 
 def RecoveryStatusChange(request,id):
-    try:
-        r = m.Recovery.objects.get(id=id)
-        r.status = 'Approved'
-        r.save()
-        return JsonResponse({'error':False,'data':'Successfuly Updated'})
-    except:
-        return JsonResponse({'error':True,'data':'Something went"s wrong'})
+    # try:
+    r = m.Recovery.objects.get(id=id)
+    r.status = 'Approved'
+    r.save()
+    return JsonResponse({'error':False,'data':'Successfuly Updated'})
+    # except:
+    #     return JsonResponse({'error':True,'data':'Something went"s wrong'})
 
 # Ledger View
 class PartyLedgerFilter(generics.ListAPIView):

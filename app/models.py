@@ -616,10 +616,9 @@ class PartyOrder(models.Model):
 
 
             if self.status == 'Confirmed':
-                if self.sl == None:
+                if not self.sl:
                     # --------------------
                     sl = SalesLedger(total_amount=self.total_amount,transaction_type='Credit')
-
                     sl.save()
                     self.sl = sl
                     # -------------------
@@ -639,31 +638,32 @@ class PartyOrder(models.Model):
                     self.fl = fl
                 else:
                     # Party Ledger
-                    self.pl.freight = self.freight
-                    self.pl.description = self.description
-                    self.pl.total_amount = self.total_amount
-                    self.pl.save()
-                    # Party Ledger 2
-                    self.plc1.freight = self.freight
-                    self.plc1.description = self.description
-                    self.plc1.total_amount = self.freight
-                    self.plc1.save()
-                    # Party Ledger 3
-                    self.plc2.freight = self.freight
-                    self.plc2.description = self.description
-                    self.plc2.total_amount = self.freight
-                    self.plc2.save()
-                    # Sales Ledger
-                    self.sl.total_amount = self.total_amount
-                    self.sl.save()
-                    # Incentive Ledger
-                    self.il.total_amount = self.total_amount *(self.sale_officer.commission/100) 
-                    self.il.description = self.description
-                    self.il.save()
-                    # FreightLedger Ledger
-                    self.fl.total_amount = self.freight
-                    self.fl.description = self.description 
-                    self.fl.save()
+                    if self.pl:
+                        self.pl.freight = self.freight
+                        self.pl.description = self.description
+                        self.pl.total_amount = self.total_amount
+                        self.pl.save()
+                        # Party Ledger 2
+                        self.plc1.freight = self.freight
+                        self.plc1.description = self.description
+                        self.plc1.total_amount = self.freight
+                        self.plc1.save()
+                        # Party Ledger 3
+                        self.plc2.freight = self.freight
+                        self.plc2.description = self.description
+                        self.plc2.total_amount = self.freight
+                        self.plc2.save()
+                        # Sales Ledger
+                        self.sl.total_amount = self.total_amount
+                        self.sl.save()
+                        # Incentive Ledger
+                        self.il.total_amount = self.total_amount *(self.sale_officer.commission/100) 
+                        self.il.description = self.description
+                        self.il.save()
+                        # FreightLedger Ledger
+                        self.fl.total_amount = self.freight
+                        self.fl.description = self.description 
+                        self.fl.save()
 
 
                 # ##################
