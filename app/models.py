@@ -560,7 +560,7 @@ class PartyOrder(models.Model):
     
 
     def save(self, *args, **kwargs):
-        self.discounted_amount = self.total_amount * (self.party.discount.discount/100) 
+        self.discounted_amount = self.gross_total -  self.total_amount 
         if self.id == None:
             self.pandding_amount = self.total_amount
             super(PartyOrder, self).save(*args, **kwargs)
