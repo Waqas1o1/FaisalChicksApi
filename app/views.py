@@ -13,9 +13,6 @@ from utils.utils import GetLegder
 from utils.enums import Groups as g
 from django.contrib.auth.models import Group
 
-
-
-# Create your views here.
 # Authentication
  
 # CRUD oprations
@@ -108,7 +105,8 @@ class SalesOfficerViewSet(viewsets.ViewSet):
             user.last_name  = 'Sales Officer'
             grp = Group.objects.get(name=g.SalesOfficer.value)
             user.groups.add(grp)
-            
+            username.lower()
+            password.lower()
             # SalesOfficer
             commission = request.data['commission']
             contact = request.data['contact']
@@ -761,6 +759,8 @@ class DispatchViewSet(viewsets.ViewSet):
             username = request.data['username']
             email = request.data['email']
             password = request.data['password']
+            username.lower()
+            password.lower()
             user = User.objects.create_user(username, email, password)
             user.first_name = name
             user.last_name = 'Dispacther'
