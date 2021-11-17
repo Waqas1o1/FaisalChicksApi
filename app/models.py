@@ -327,9 +327,9 @@ class BankLedger(Ledger):
     def delete(self, *args, **kwargs):
         up = kwargs.pop('updating', {})
         if up == {}:
-            DeleteLeadgers(self, DiscountLedger, 'Bank', True)
+            DeleteLeadgers(self, BankLedger, 'Bank', True)
         else:
-            super(DiscountLedger, self).delete()   
+            super(BankLedger, self).delete()   
 
 class SalesLedger(Ledger):
     sales_person = models.ForeignKey(SalesPerson,on_delete=models.CASCADE)
@@ -560,7 +560,7 @@ class PartyOrder(models.Model):
     
 
     def save(self, *args, **kwargs):
-        self.discounted_amount = self.gross_total -  self.total_amount 
+        self.discounted_amount = self.gross_total *  (self.party.discount.discount/100) 
         if self.id == None:
             self.pandding_amount = self.total_amount
             super(PartyOrder, self).save(*args, **kwargs)
