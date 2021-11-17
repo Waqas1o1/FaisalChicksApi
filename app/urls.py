@@ -32,6 +32,7 @@ urlpatterns = [
     path('BankLedger/<int:bank>/<str:FromDate>/<str:ToDate>',views.BankLedgerFilter.as_view()),
     path('IncentiveLedger/<str:FromDate>/<str:ToDate>',views.IncentiveLedgerFilter.as_view()),
     path('GetPartyOrderByAmount/<int:party>/<int:amount>/',views.GetPartyOrderByAmount),
+    path('GetRecoveriesByOrder/<int:id>',views.GetRecoveriesByPartyOrder),
     # Status Change
     path('ChangePartyOrderStatus/<int:id>/',views.ChangePartyOrderStatus),
     path('ResetPartyOrderStatus/<int:id>/',views.ResetPartyOrderStatus),
