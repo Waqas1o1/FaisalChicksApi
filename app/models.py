@@ -221,7 +221,7 @@ class IncentivePerson(models.Model):
 # Ledgers
 class Ledger(models.Model):
     date = models.DateField(default=timezone.now, blank=True)
-    description = models.CharField(max_length=50, null=True)
+    description = models.CharField(max_length=300000, null=True)
     transaction_type = models.CharField(max_length=50, choices=(
         ('Debit', 'Debit'), ('Credit', 'Credit')))
     total_amount = models.FloatField(null=True)
@@ -701,7 +701,7 @@ class Recovery(models.Model):
     payment_method = models.CharField(max_length=20,choices=(('SalesOfficer','SalesOfficer'),('Cash','Cash'),('Bank','Bank'),('Clearing','Clearing'))) 
     bank = models.ForeignKey(Bank,on_delete=models.CASCADE,null=True,blank=True)
     amount = models.FloatField()
-    description = models.CharField(blank=True,null=True,max_length=50)
+    description = models.CharField(blank=True,null=True,max_length=30000)
     # Images 
     attachments = models.FileField(null=True,blank=True,upload_to='Recovery Attachments')
     # Ledgers
