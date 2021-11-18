@@ -41,7 +41,7 @@ class Category(models.Model):
 class Party(models.Model):
     ref_id = models.IntegerField(blank=True,null=True)  
     name = models.CharField(max_length=30, unique=True)
-    email = models.EmailField(max_length=30, unique=True)
+    email = models.EmailField(max_length=30)
     area = models.CharField(max_length=300)
     zone = models.CharField(max_length=300)
     region = models.CharField(max_length=300)
@@ -536,7 +536,7 @@ class PartyOrder(models.Model):
     party = models.ForeignKey(Party,on_delete=models.CASCADE)
     sale_officer = models.ForeignKey(SalesOfficer,on_delete=models.CASCADE)
     status = models.CharField(max_length=50, choices=[('Pending', 'Pending'), ('Confirmed','Confirmed'),('Delivered','Delivered')], default='Pending')
-    description = models.CharField(max_length=50,blank=True,null=True)
+    description = models.CharField(max_length=30000,blank=True,null=True)
     freight = models.FloatField(default=0)
     locations = models.TextField(default='')
     
