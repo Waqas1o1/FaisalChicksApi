@@ -194,8 +194,12 @@ class PartyOrderSerializer(serializers.ModelSerializer):
         response['products'] = POPSerializer(pop,many=True).data
         pd = m.PartyOrderProduct.objects.filter(party_order=instance)
         sum = 0
+        total_sum = 0
         for p in pd:
             sum += p.qty
+            total_sum += (p.qty * p.rate)
+        
+        response['pdt__sum'] = total_sum
         response['pdt_qty__sum'] = sum
 
         if response['status'] == 'Delivered':
