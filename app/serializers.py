@@ -1,3 +1,4 @@
+from django.db.models.query_utils import Q
 from rest_framework import serializers
 from . import models as m
 from django.db.models import F, Sum
@@ -105,6 +106,8 @@ class PartyLedgerSerializer(serializers.ModelSerializer):
         response = super().to_representation(instance)
         response['party'] = PartySerializer(instance.party).data
         response['sales_officer'] = SalesOfficerSerializer(instance.sales_officer).data
+        lg = m.PartyOrder.objects.filter(Q(pl=instance) | Q(plc1=instance)| Q(plc2=instance)).first()
+        response['party_order'] = PartyOrderSerializer(lg).data 
         return response
 
 class SalesLedgerSerializer(serializers.ModelSerializer):
