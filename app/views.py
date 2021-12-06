@@ -41,7 +41,7 @@ class PartyViewSet(viewsets.ViewSet):
         serializer.is_valid()
         if serializer.errors:
             dict_response = {"error": True,
-                             "message": serializer.errors['name']}
+                             "message": serializer.errors}
         else:
             serializer.save()
             dict_response = {"error": False,
@@ -66,7 +66,7 @@ class PartyViewSet(viewsets.ViewSet):
         serializer.is_valid()
         if serializer.errors:
             dict_response = {"error": True,
-                             "message": serializer.errors['name']}
+                             "message": serializer.errors}
         else:
             serializer.save()
             dict_response = {"error": False,
@@ -190,7 +190,7 @@ class BankViewSet(viewsets.ViewSet):
         serializer.is_valid()
         if serializer.errors:
             dict_response = {"error": True,
-                             "message": serializer.errors['name']}
+                             "message": serializer.errors}
         else:
             serializer.save()
             dict_response = {"error": False,
@@ -215,7 +215,7 @@ class BankViewSet(viewsets.ViewSet):
         serializer.is_valid()
         if serializer.errors:
             dict_response = {"error": True,
-                             "message": serializer.errors['name']}
+                             "message": serializer.errors}
         else:
             serializer.save()
             dict_response = {"error": False,
@@ -251,7 +251,7 @@ class CategoryViewSet(viewsets.ViewSet):
         serializer.is_valid()
         if serializer.errors:
             dict_response = {"error": True,
-                             "message": serializer.errors['name']}
+                             "message": serializer.errors}
         else:
             serializer.save()
             dict_response = {"error": False,
@@ -275,7 +275,7 @@ class CategoryViewSet(viewsets.ViewSet):
         serializer.is_valid()
         if serializer.errors:
             dict_response = {"error": True,
-                             "message": serializer.errors['name']}
+                             "message": serializer.errors}
         else:
             serializer.save()
             dict_response = {"error": False,
@@ -310,7 +310,7 @@ class ProductViewSet(viewsets.ViewSet):
         serializer.is_valid()
         if serializer.errors:
             dict_response = {"error": True,
-                             "message": serializer.errors['name']}
+                             "message": serializer.errors}
         else:
             serializer.save()
             dict_response = {"error": False,
@@ -335,7 +335,7 @@ class ProductViewSet(viewsets.ViewSet):
         serializer.is_valid()
         if serializer.errors:
             dict_response = {"error": True,
-                             "message": serializer.errors['name']}
+                             "message": serializer.errors}
         else:
             serializer.save()
             dict_response = {"error": False,
@@ -370,7 +370,7 @@ class DiscountCategoryViewSet(viewsets.ViewSet):
         serializer.is_valid(raise_exception=True)
         if serializer.errors:
             dict_response = {"error": True,
-                             "message": serializer.errors['name']}
+                             "message": serializer.errors}
         else:
             serializer.save()
             dict_response = {"error": False,
@@ -396,7 +396,7 @@ class DiscountCategoryViewSet(viewsets.ViewSet):
         serializer.is_valid()
         if serializer.errors:
             dict_response = {"error": True,
-                             "message": serializer.errors['name']}
+                             "message": serializer.errors}
         else:
             serializer.save()
             dict_response = {"error": False,
@@ -439,7 +439,7 @@ class PartyOrderViewSet(viewsets.ViewSet):
         serializer.is_valid()
         if serializer.errors:
             dict_response = {"error": True,
-                             "message": serializer.errors['name']}
+                             "message": serializer.errors}
         else:
             serializer.save()
             dict_response = {"error": False,
@@ -479,7 +479,7 @@ class PartyOrderViewSet(viewsets.ViewSet):
         serializer.is_valid()
         if serializer.errors:
             dict_response = {"error": True,
-                             "message": serializer.errors['name']}
+                             "message": serializer.errors}
         else:
             data = serializer.save()
             dict_response = {"error": False,
@@ -555,7 +555,7 @@ class DispatchTableViewSet(viewsets.ViewSet):
                 query, data=request.data, context={"request": request})
             if serializer.errors:
                 dict_response = {"error": True,
-                                 "message": serializer.errors['name']}
+                                 "message": serializer.errors}
             else:
                 serializer.save()
                 dict_response = {"error": False,
@@ -591,7 +591,7 @@ class PartyOrderProductViewSet(viewsets.ViewSet):
         serializer.is_valid()
         if serializer.errors:
             dict_response = {"error": True,
-                             "message": serializer.errors['name']}
+                             "message": serializer.errors}
         else:
             serializer.save()
             dict_response = {"error": False,
@@ -616,7 +616,7 @@ class PartyOrderProductViewSet(viewsets.ViewSet):
         serializer.is_valid()
         if serializer.errors:
             dict_response = {"error": True,
-                             "message": serializer.errors['name']}
+                             "message": serializer.errors}
         else:
             serializer.save()
             dict_response = {"error": False,
@@ -657,7 +657,7 @@ class RecoveryViewSet(viewsets.ViewSet):
         serializer.is_valid()
         if serializer.errors:
             dict_response = {"error": True,
-                             "message": serializer.errors['name']}
+                             "message": serializer.errors}
         else:
             serializer.save()
             dict_response = {"error": False,
@@ -681,7 +681,7 @@ class RecoveryViewSet(viewsets.ViewSet):
         serializer.is_valid()
         if serializer.errors:
             dict_response = {"error": True,
-                             "message": serializer.errors['name']}
+                             "message": serializer.errors}
         else:
             serializer.save()
             dict_response = {"error": False,
@@ -719,7 +719,7 @@ class SalesOfficerReceivingViewSet(viewsets.ViewSet):
             serializer.is_valid()
             if serializer.errors:
                 dict_response = {"error": True,
-                                 "message": serializer.errors['name']}
+                                 "message": serializer.errors}
             else:
                 serializer.save()
                 dict_response = {"error": False,
@@ -745,7 +745,7 @@ class SalesOfficerReceivingViewSet(viewsets.ViewSet):
             serializer.is_valid(raise_exception=True)
             if serializer.errors:
                 dict_response = {"error": True,
-                                 "message": serializer.errors['name']}
+                                 "message": serializer.errors}
             else:
                 serializer.save()
                 dict_response = {"error": False,
@@ -873,7 +873,7 @@ class GenratePartOrder(viewsets.ViewSet):
                 m.PartyOrderProduct.objects.get(
                     party_order__id=save_dict['party_order']).delete()
                 return Response({"error": True,
-                                "message": serializer.errors['name']})
+                                "message": serializer.errors})
             else:
                 serializer.save()
 
