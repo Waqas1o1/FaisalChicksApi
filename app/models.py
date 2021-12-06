@@ -790,9 +790,9 @@ class Recovery(models.Model):
                     # Party Ledger
                     if self.party_order:
                         self.pl.party_order = self.party_order
-                    self.pl.freight = self.party_order.freight
-                    self.pl.total_amount = self.amount
-                    self.pl.save()
+                        self.pl.freight = self.party_order.freight
+                        self.pl.total_amount = self.amount
+                        self.pl.save()
                     if self.payment_method == 'SalesOfficer':
                         if self.party_order:
                             self.sl.party_order = self.party_order
