@@ -819,11 +819,15 @@ class DispatchViewSet(viewsets.ViewSet):
         serializer = s.UsersSerializer(
             query, data=request.data, context={"request": request})
         serializer.is_valid()
+            
         if serializer.errors:
             dict_response = {"error": True,
                              "message": f"{serializer.errors}"}
         else:
-            serializer.save()
+            dispatcher = serializer.save()
+            if 'password' in request.data:
+                dispatcher.set_password(request.data['password'])
+                dispatcher.save()
             dict_response = {"error": False,
                              "message": "Successfully Updated Data"}
 
