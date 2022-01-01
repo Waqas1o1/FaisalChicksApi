@@ -297,7 +297,7 @@ class CategoryViewSet(viewsets.ViewSet):
 
 class ProductViewSet(viewsets.ViewSet):
     def list(self, request):
-        data = m.Product.objects.all()
+        data = m.Product.objects.all().order_by('-id')
         serializer = s.ProductSerializer(
             data, many=True, context={"request": request})
         response_dict = {
