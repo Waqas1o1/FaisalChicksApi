@@ -202,7 +202,7 @@ class PartyOrderSerializer(serializers.ModelSerializer):
         response['pdt_qty__sum'] = sum
 
         if response['status'] == 'Delivered':
-            dt = m.DispatchTable.objects.get(party_order=instance)
+            dt = m.DispatchTable.objects.filter(party_order=instance).first()
             response['dispatch'] = DispatchTableSerializer(dt).data
         return response
 
