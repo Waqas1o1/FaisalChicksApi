@@ -121,6 +121,7 @@ STATIC_URL = '/static/'
 CORS_ORIGIN_ALLOW_ALL = True  
 ORS_ORIGIN_WHITELIST = [
     'https://technoventive.herokuapp.com',
+    'https://fs.technoventive.com',
     'http://technoventive.herokuapp.com',
     'http://localhost:3000',
     'https://heenterprises.herokuapp.com/'
