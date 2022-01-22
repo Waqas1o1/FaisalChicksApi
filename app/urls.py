@@ -41,6 +41,7 @@ urlpatterns = [
     path('test',views.Test),
     # Import
     path('ImportCSV/',views.Import),
+    path('Backup/',views.Backup),
 
 
 ]

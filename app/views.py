@@ -1,10 +1,16 @@
+from datetime import datetime
+import json
+import sys
+from django.http import FileResponse
 import pandas as pd
 from copy import error
 from django.contrib.auth.models import User
 from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404, render
+from pytz import timezone
 from rest_framework import viewsets, generics
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from app import models as m
 from app import serializers as s
 from app import permisions as p
@@ -13,6 +19,8 @@ from django.views.decorators.csrf import csrf_exempt
 from utils.utils import GetLegder
 from utils.enums import Groups as g
 from django.contrib.auth.models import Group
+from django.core.management import call_command
+
 
 # Authentication
 
@@ -1157,3 +1165,13 @@ def Import(request):
             except:
                 pass
     return JsonResponse('Ok', safe=False)
+
+@api_view(['GET'])
+def Backup(requets):  
+    sysout = sys.stdout
+    date = datetime.now()
+    sys.stdout = open(f'backup({date.date()}).json', 'w')
+    call_command('dumpdata', 'app')
+    sys.stdout = sysout
+
+    return FileResponse(open(f'backup({date.date()}).json', 'rb'),as_attachment=True)
