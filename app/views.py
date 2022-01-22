@@ -1171,7 +1171,6 @@ def Backup(requets):
     sysout = sys.stdout
     date = datetime.now()
     sys.stdout = open(f'backup({date.date()}).json', 'w')
-    call_command('dumpdata', 'app')
+    call_command('dumpdata')
     sys.stdout = sysout
-
     return FileResponse(open(f'backup({date.date()}).json', 'rb'),as_attachment=True)
